@@ -31,3 +31,32 @@ def line_bresenham(surface, x0, y0, x1, y1, color):
         if e2 < dx:
             err += dx
             y0 += sy
+
+
+def line_dda(surface, x0, y0, x1, y1, color):
+    """
+    Desenha uma reta usando o algoritmo DDA.
+    """
+
+    x0, y0 = float(x0), float(y0)
+    x1, y1 = float(x1), float(y1)
+
+    dx = x1 - x0
+    dy = y1 - y0
+
+    steps = int(max(abs(dx), abs(dy)))
+
+    if steps == 0:
+        set_pixel(surface, x0, y0, color)
+        return
+
+    x_inc = dx / steps
+    y_inc = dy / steps
+
+    x = x0
+    y = y0
+
+    for _ in range(steps + 1):
+        set_pixel(surface, round(x), round(y), color)
+        x += x_inc
+        y += y_inc
