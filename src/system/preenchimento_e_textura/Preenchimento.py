@@ -139,3 +139,89 @@ def scanline_fill_polygon(surface, vertices, fill_color):
 
             for x in range(x_start, x_end + 1):
                 set_pixel(surface, x, y, fill_color)
+
+def scanline_fill_polygon_gradient(surface, vertices, colors):
+    """
+    Preenchimento de polígono com gradiente por vértice (Gouraud 2D).
+
+    vertices -> [(x,y), ...]
+    colors   -> [(r,g,b), ...] mesma ordem dos vértices
+    """
+
+    if len(vertices) < 3:
+        return
+
+    # Garantir mesma quantidade
+    if len(vertices) != len(colors):
+        raise ValueError("Vertices e colors devem ter o mesmo tamanho")
+
+    # Limites verticais
+    ymin = int(min(y for _, y in vertices))
+    ymax = int(max(y for _, y in vertices))
+
+    for y in range(ymin, ymax + 1):
+
+        intersections = []
+
+        for i in range(len(vertices)):
+
+            x1, y1 = vertices[i]
+            x2, y2 = vertices[(i + 1) % len(vertices)]
+
+            r1, g1, b1 = colors[i]
+            r2, g2, b2 = colors[(i + 1) % len(vertices)]
+
+            # Ignora arestas horizontais
+            if y1 == y2:
+                continue
+
+            # Verifica se scanline cruza aresta
+            if (y >= min(y1, y2)) and (y < max(y1, y2)):
+
+                t = (y - y1) / (y2 - y1)
+
+                # Interpolação da posição
+                x = x1 + t * (x2 - x1)
+
+                # Interpolação da cor na aresta
+                r = r1 + t * (r2 - r1)
+                g = g1 + t * (g2 - g1)
+                b = b1 + t * (b2 - b1)
+
+                intersections.append((x, r, g, b))
+
+        # Ordenar por X
+        intersections.sort(key=lambda item: item[0])
+
+        # Preencher entre pares
+        for i in range(0, len(intersections), 2):
+
+            if i + 1 >= len(intersections):
+                break
+
+            x_start, r_start, g_start, b_start = intersections[i]
+            x_end,   r_end,   g_end,   b_end   = intersections[i + 1]
+
+            x_start = int(round(x_start))
+            x_end   = int(round(x_end))
+
+            dx = x_end - x_start
+
+            if dx == 0:
+                continue
+
+            for x in range(x_start, x_end + 1):
+
+                t = (x - x_start) / dx
+
+                # Interpolação horizontal da cor
+                r = r_start + t * (r_end - r_start)
+                g = g_start + t * (g_end - g_start)
+                b = b_start + t * (b_end - b_start)
+
+                # Clamp segurança
+                r = max(0, min(int(r), 255))
+                g = max(0, min(int(g), 255))
+                b = max(0, min(int(b), 255))
+
+                set_pixel(surface, x, y, (r, g, b))
