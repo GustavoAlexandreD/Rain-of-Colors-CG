@@ -15,78 +15,133 @@ from system.primitivas.SetPixel import set_pixel
 # Função principal
 # ============================================================
 
-def scanline_texture_polygon(surface, texture, vertices, uvs):
+def scanline_texture_polygon(
+    pixel_array,
+    screen_w,
+    screen_h,
+    vertices_uv,
+    texture_matrix,
+    tex_w,
+    tex_h,
+    method="standard",
+):
     """
-    Preenche polígono com textura usando interpolação linear.
+    Optimized version using Direct Memory Access (PixelArray) and Texture Matrices.
 
-    vertices -> lista [(x,y), ...]
-    uvs      -> lista [(u,v), ...] correspondente a cada vértice
+    Args:
+        pixel_array: pygame.PixelArray (locked screen surface)
+        screen_w, screen_h: int (screen dimensions)
+        vertices_uv: list of (x, y, u, v)
+        texture_matrix: list of lists containing colors (pre-loaded texture)
+        tex_w, tex_h: int (dimensions of the texture)
+        method: 'standard' or 'tiling'
     """
+    # Extrai coordenadas Y para definir o range do scanline
+    y_values = [v[1] for v in vertices_uv]
+    y_min = max(0, int(min(y_values)))
+    y_max = min(screen_h, int(max(y_values)))
 
-    if len(vertices) < 3:
-        return
+    # Pré-cálculo de limites para evitar lookups repetidos
+    tex_w_max = tex_w - 1
+    tex_h_max = tex_h - 1
+    n = len(vertices_uv)
 
-    tex_width, tex_height = texture.get_size()
+    for y in range(y_min, y_max):
+        intersecoes = []
+        for i in range(n):
+            x0, y0, u0, v0 = vertices_uv[i]
+            x1, y1, u1, v1 = vertices_uv[(i + 1) % n]
 
-    ymin = int(min(y for _, y in vertices))
-    ymax = int(max(y for _, y in vertices))
-
-    for y in range(ymin, ymax + 1):
-
-        intersections = []
-
-        for i in range(len(vertices)):
-            x1, y1 = vertices[i]
-            x2, y2 = vertices[(i + 1) % len(vertices)]
-
-            u1, v1 = uvs[i]
-            u2, v2 = uvs[(i + 1) % len(vertices)]
-
-            if y1 == y2:
+            # Ignora arestas horizontais
+            if int(y0) == int(y1):
                 continue
 
-            if (y >= min(y1, y2)) and (y < max(y1, y2)):
+            # Garante y0 < y1
+            if y0 > y1:
+                x0, y0, u0, v0, x1, y1, u1, v1 = x1, y1, u1, v1, x0, y0, u0, v0
 
-                t = (y - y1) / (y2 - y1)
+            # Verifica scanline
+            if y < y0 or y >= y1:
+                continue
 
-                x = x1 + t * (x2 - x1)
-                u = u1 + t * (u2 - u1)
-                v = v1 + t * (v2 - v1)
+            # Interpolação Y (calculada uma vez por linha)
+            t = (y - y0) / (y1 - y0)
+            x = x0 + (x1 - x0) * t
+            u = u0 + (u1 - u0) * t
+            v = v0 + (v1 - v0) * t
 
-                intersections.append((x, u, v))
+            intersecoes.append((x, u, v))
 
-        intersections.sort(key=lambda item: item[0])
+        # Ordena interseções pelo X
+        intersecoes.sort(key=lambda k: k[0])
 
-        for i in range(0, len(intersections), 2):
-
-            if i + 1 >= len(intersections):
+        # Preenche os pixels entre pares de interseções
+        for i in range(0, len(intersecoes), 2):
+            if i + 1 >= len(intersecoes):
                 break
 
-            x_start, u_start, v_start = intersections[i]
-            x_end,   u_end,   v_end   = intersections[i + 1]
+            x_start_f, u_start, v_start = intersecoes[i]
+            x_end_f, u_end, v_end = intersecoes[i + 1]
 
-            x_start = int(round(x_start))
-            x_end   = int(round(x_end))
+            x_start = int(x_start_f)
+            x_end = int(x_end_f)
 
-            dx = x_end - x_start
-
-            if dx == 0:
+            span_width = x_end - x_start
+            if span_width <= 0:
                 continue
 
-            for x in range(x_start, x_end + 1):
+            # --- OTIMIZAÇÃO 1: Passo Incremental ---
+            # Calcula quanto a textura muda por pixel (Slope)
+            # Evita divisão dentro do loop
+            inv_span = 1.0 / span_width
+            u_step = (u_end - u_start) * inv_span
+            v_step = (v_end - v_start) * inv_span
 
-                t = (x - x_start) / dx
+            # Clipping Horizontal e Correção de Textura
+            x_draw_start = max(0, x_start)
+            x_draw_end = min(screen_w, x_end)
 
-                u = u_start + t * (u_end - u_start)
-                v = v_start + t * (v_end - v_start)
+            # Se clipamos o início (x negativo), avançamos o UV proporcionalmente
+            start_skip = x_draw_start - x_start
+            cur_u = u_start + (u_step * start_skip)
+            cur_v = v_start + (v_step * start_skip)
 
-                # Converte UV (0-1) para coordenada da textura
-                tx = int(u * (tex_width  - 1))
-                ty = int(v * (tex_height - 1))
+            # --- OTIMIZAÇÃO 2: Separação de Loops ---
+            # Evita checar "if method == tiling" para cada pixel
 
-                # Clamp segurança
-                tx = max(0, min(tx, tex_width  - 1))
-                ty = max(0, min(ty, tex_height - 1))
+            if method == "tiling":
+                # Loop Otimizado para TILING (Cabo/Fundo)
+                for x in range(x_draw_start, x_draw_end):
+                    # Modulo para repetição
+                    u_int = int(cur_u) % tex_w
+                    v_int = int(cur_v) % tex_h
 
-                color = texture.get_at((tx, ty))
-                set_pixel(surface, x, y, color)
+                    color = texture_matrix[u_int][v_int]
+                    if color[3] >= 10:  # Transparência básica
+                        pixel_array[x, y] = color
+
+                    cur_u += u_step
+                    cur_v += v_step
+            else:
+                # Loop Otimizado para STANDARD (Objeto Único/Clamp)
+                for x in range(x_draw_start, x_draw_end):
+                    # Clamp manual (mais rápido que min/max repetidos)
+                    u_int = int(cur_u)
+                    v_int = int(cur_v)
+
+                    if u_int < 0:
+                        u_int = 0
+                    elif u_int > tex_w_max:
+                        u_int = tex_w_max
+
+                    if v_int < 0:
+                        v_int = 0
+                    elif v_int > tex_h_max:
+                        v_int = tex_h_max
+
+                    color = texture_matrix[u_int][v_int]
+                    if color[3] >= 10:
+                        pixel_array[x, y] = color
+
+                    cur_u += u_step
+                    cur_v += v_step
