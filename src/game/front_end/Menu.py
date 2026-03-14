@@ -25,7 +25,7 @@ class Menu:
         # ==============================
 
         BASE_DIR = os.path.dirname(__file__)
-        # Assets are stored at the repository root under assets/images
+
         path = os.path.join(
             BASE_DIR,
             "..",
@@ -36,10 +36,19 @@ class Menu:
             "MenuBackground.jpeg",
         )
 
-        self.background_texture = pygame.image.load(path).convert()
+        self.background_texture = pygame.image.load(path).convert_alpha()
+
+        # Dimensões da textura
+        self.tex_w = self.background_texture.get_width()
+        self.tex_h = self.background_texture.get_height()
+
+        # Converte textura para matriz de cores (acesso rápido)
+        self.texture_matrix = [
+            [self.background_texture.get_at((x, y)) for y in range(self.tex_h)]
+            for x in range(self.tex_w)
+        ]
 
         self._build_layout()
-
 
     # ======================================================
     # Layout
@@ -62,7 +71,6 @@ class Menu:
             y = start_y + i * spacing
 
             self.buttons.append((x, y, w, h))
-
 
     # ======================================================
     # Update
@@ -91,76 +99,102 @@ class Menu:
 
         return None
 
-
     # ======================================================
     # Desenha BACKGROUND com textura
     # ======================================================
 
     def draw_background(self, surface):
 
-        vertices = [
-            (0, 0),
-            (self.width, 0),
-            (self.width, self.height),
-            (0, self.height)
-        ]
+        # Cria acesso direto à memória da surface
+        pixel_array = pygame.PixelArray(surface)
 
-        uvs = [
-            (0, 0),
-            (1, 0),
-            (1, 1),
-            (0, 1)
+        # Polígono que cobre a tela inteira
+        vertices_uv = [
+            (0, 0, 0, 0),
+            (self.width, 0, self.tex_w, 0),
+            (self.width, self.height, self.tex_w, self.tex_h),
+            (0, self.height, 0, self.tex_h),
         ]
 
         scanline_texture_polygon(
-            surface,
-            self.background_texture,
-            vertices,
-            uvs
+            pixel_array,
+            self.width,
+            self.height,
+            vertices_uv,
+            self.texture_matrix,
+            self.tex_w,
+            self.tex_h,
+            method="standard",
         )
 
+        # Libera o lock da surface
+        del pixel_array
 
     # ======================================================
     # Desenha botão
     # ======================================================
 
     def draw_button(self, surface, rect, selected):
-        x, y, w, h = rect
-        
-        # Definição das cores baseadas na imagem
-        # Botão selecionado fica mais claro/azulado, botão normal é cinza escuro
-        color_bg = (100, 110, 130) if selected else (45, 50, 65)
-        color_border_outer = (0, 0, 0)          # Contorno preto externo
-        color_border_inner = (150, 155, 170)    # Borda de brilho interna (topo)
-        color_shadow_inner = (30, 35, 45)       # Sombra interna (baixo)
 
-        # 1. DEFINIR VÉRTICES DO POLÍGONO (Chanfrado para parecer arredondado)
-        # Cortamos 4 pixels dos cantos para o efeito pixel art
-        c = 4 
+        x, y, w, h = rect
+
+        # Cores
+        color_bg = (100, 110, 130) if selected else (45, 50, 65)
+        color_border_outer = (0, 0, 0)
+        color_border_inner = (150, 155, 170)
+        color_shadow_inner = (30, 35, 45)
+
+        # Cantos chanfrados
+        c = 4
+
         vertices = [
-            (x + c, y), (x + w - c, y),           # Topo
-            (x + w, y + c), (x + w, y + h - c),   # Direita
-            (x + w - c, y + h), (x + c, y + h),   # Baixo
-            (x, y + h - c), (x, y + c)            # Esquerda
+            (x + c, y),
+            (x + w - c, y),
+            (x + w, y + c),
+            (x + w, y + h - c),
+            (x + w - c, y + h),
+            (x + c, y + h),
+            (x, y + h - c),
+            (x, y + c)
         ]
 
-        # 2. PREENCHIMENTO DO CORPO (Background)
+        # Preenchimento
         scanline_fill_polygon(surface, vertices, color_bg)
 
-        # 3. CONTORNO EXTERNO PRETO (Bresenham)
-        # Desenhamos o contorno seguindo os mesmos vértices
+        # Contorno
         for i in range(len(vertices)):
+
             p1 = vertices[i]
             p2 = vertices[(i + 1) % len(vertices)]
-            line_bresenham(surface, p1[0], p1[1], p2[0], p2[1], color_border_outer)
 
-        # 4. DETALHES DE "ESTILO" (Bordas duplas internas)
-        # Linha de luz no topo (para dar volume)
-        line_bresenham(surface, x + c, y + 2, x + w - c, y + 2, color_border_inner)
-        # Linha de sombra na base
-        line_bresenham(surface, x + c, y + h - 2, x + w - c, y + h - 2, color_shadow_inner)
+            line_bresenham(
+                surface,
+                p1[0],
+                p1[1],
+                p2[0],
+                p2[1],
+                color_border_outer
+            )
 
+        # Linha de luz (topo)
+        line_bresenham(
+            surface,
+            x + c,
+            y + 2,
+            x + w - c,
+            y + 2,
+            color_border_inner
+        )
 
+        # Linha de sombra (base)
+        line_bresenham(
+            surface,
+            x + c,
+            y + h - 2,
+            x + w - c,
+            y + h - 2,
+            color_shadow_inner
+        )
 
     # ======================================================
     # Render final
@@ -172,4 +206,8 @@ class Menu:
 
         for i, rect in enumerate(self.buttons):
 
-            self.draw_button(surface, rect, i == self.selected)
+            self.draw_button(
+                surface,
+                rect,
+                i == self.selected
+            )
