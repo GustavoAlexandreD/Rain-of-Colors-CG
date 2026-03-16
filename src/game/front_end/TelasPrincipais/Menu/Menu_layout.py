@@ -15,8 +15,9 @@ class MenuLayout:
     def _build_layout(self):
 
         center_x = self.width // 2
+        center_y = self.height // 2
 
-        start_y = 420
+        start_y = center_y + 100
         spacing = 80
 
         button_w = 260
