@@ -8,30 +8,44 @@ def line_bresenham(surface, x0, y0, x1, y1, color):
     x0, y0 = int(x0), int(y0)
     x1, y1 = int(x1), int(y1)
 
-    dx = abs(x1 - x0)
-    dy = abs(y1 - y0)
+    steep = abs(y1 - y0) > abs(x1 - x0)
+    if steep:
+        x0, y0 = y0, x0
+        x1, y1 = y1, x1
 
-    sx = 1 if x0 < x1 else -1
-    sy = 1 if y0 < y1 else -1
+    if x0 > x1:
+        x0, x1 = x1, x0
+        y0, y1 = y1, y0
 
-    err = dx - dy
+    dx = x1 - x0
+    dy = y1 - y0
 
-    while True:
-        set_pixel(surface, x0, y0, color)
+    ystep = 1
+    if dy < 0:
+        ystep = -1
+        dy = -dy
 
-        if x0 == x1 and y0 == y1:
-            break
+    # Bresenham clássico
+    d = 2 * dy - dx
+    incE = 2 * dy
+    incNE = 2 * (dy - dx)
 
-        e2 = 2 * err
+    x = x0
+    y = y0
 
-        if e2 > -dy:
-            err -= dy
-            x0 += sx
+    while x <= x1:
+        if steep:
+            set_pixel(surface, y, x, color)
+        else:
+            set_pixel(surface, x, y, color)
 
-        if e2 < dx:
-            err += dx
-            y0 += sy
+        if d <= 0:
+            d += incE
+        else:
+            d += incNE
+            y += ystep
 
+        x += 1
 
 def line_dda(surface, x0, y0, x1, y1, color):
     """
