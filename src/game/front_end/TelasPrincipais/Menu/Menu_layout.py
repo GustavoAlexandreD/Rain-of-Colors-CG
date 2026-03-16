@@ -16,7 +16,7 @@ class MenuLayout:
 
         center_x = self.width // 2
 
-        start_y = 350
+        start_y = 420
         spacing = 80
 
         button_w = 260

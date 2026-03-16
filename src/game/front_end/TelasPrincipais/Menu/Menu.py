@@ -2,7 +2,7 @@ import pygame
 
 from game.front_end.TelasPrincipais.Menu.Menu_layout import MenuLayout
 from game.front_end.TelasPrincipais.Menu.Menu_controller import MenuController
-
+from src.system.primitivas.Linha import line_bresenham
 from game.front_end.Componentes.Button import Button
 from game.front_end.Componentes.Text import draw_text_centered
 from game.front_end.Componentes.Background import Background
@@ -70,6 +70,43 @@ class Menu:
             )
 
             self.buttons.append(button)
+    
+    def draw_button(self, button, selected):
+
+        x, y, w, h = button.x, button.y, button.width, button.height
+
+        # Cores
+        color_bg = (70, 70, 100) if selected else (45, 50, 65)
+        color_border_outer = (0, 0, 0)
+        color_border_inner = (150, 155, 170)
+        color_shadow_inner = (30, 35, 45)
+
+        button = Button(button.surface, x, y, w, h)
+        button.fill(color_bg)
+        button.draw(color_border_outer, 3)
+
+        # Cantos chanfrados
+        c = 4
+
+        # Linha de luz (topo)
+        line_bresenham(
+            button.surface,
+            x + c,
+            y + 2,
+            x + w - c,
+            y + 2,
+            color_border_inner
+        )
+
+        # Linha de sombra (base)
+        line_bresenham(
+            button.surface,
+            x + c,
+            y + h - 2,
+            x + w - c,
+            y + h - 2,
+            color_shadow_inner
+        )
 
     # ======================================================
     # Update
@@ -98,14 +135,11 @@ class Menu:
             button.surface = surface
 
             if i == selected_index:
-                fill_color = (60, 60, 60)
-                border_color = (255, 255, 255)
+                selected = True
             else:
-                fill_color = (30, 30, 30)
-                border_color = (180, 180, 180)
+                selected = False
 
-            button.fill(fill_color)
-            button.draw(border_color, 2)
+            self.draw_button(button, selected)
 
             draw_text_centered(
                 pixel_array,
@@ -116,11 +150,3 @@ class Menu:
             )
 
         del pixel_array
-
-    # ======================================================
-    # Botão selecionado
-    # ======================================================
-
-    def get_selected(self):
-
-        return self.controller.get_selected_index()
