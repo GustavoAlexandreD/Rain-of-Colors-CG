@@ -1,10 +1,10 @@
 import pygame
 import sys
-from src.system.primitivas.SetPixel import set_pixel
-from src.game.scripts.ObjetosdaChuva.Bomba import Bomba
-from src.game.scripts.ObjetosdaChuva.Estrela import Estrela
-from src.game.scripts.ObjetosdaChuva.Gota import Gota
-from src.game.front_end.Button import Button
+from system.primitivas.SetPixel import set_pixel
+from game.scripts.ObjetosdaChuva.Bomba import Bomba
+from game.scripts.ObjetosdaChuva.Estrela import Estrela
+from game.scripts.ObjetosdaChuva.Gota import Gota
+from game.front_end.Componentes.Button import Button
 
 pygame.init()
 

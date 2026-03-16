@@ -1,7 +1,7 @@
 import pygame
 import os
 
-from src.system.preenchimento_e_textura.Texture_Mapping import scanline_texture_polygon
+from system.preenchimento_e_textura.Texture_Mapping import scanline_texture_polygon
 
 
 class Background:
@@ -15,7 +15,7 @@ class Background:
         # Carrega textura
         # ==============================
 
-        self.texture = pygame.image.load(image_path).convert_alpha()
+        self.texture = pygame.image.load("assets\\images\\MenuBackground.jpeg").convert_alpha()
 
         self.tex_w = self.texture.get_width()
         self.tex_h = self.texture.get_height()

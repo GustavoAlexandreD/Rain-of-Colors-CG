@@ -1,3 +1,5 @@
+import pygame
+
 def draw_text_raster(pixel_array, font, text, x, y, color):
         """
         Renderiza texto desenhando pixel por pixel.
@@ -30,3 +32,21 @@ def draw_text_raster(pixel_array, font, text, x, y, color):
                     # Verifica limites da tela (Clipping)
                     if 0 <= draw_x < screen_w and 0 <= draw_y < screen_h:
                         pixel_array[draw_x, draw_y] = curr_color
+
+# ------------------------------------------------------
+# Texto centralizado dentro de botão
+# ------------------------------------------------------
+
+def draw_text_centered(pixel_array, font, text, button, color):
+
+    text_surface = font.render(text, True, color)
+
+    text_w = text_surface.get_width()
+    text_h = text_surface.get_height()
+
+    center_x, center_y = button.get_center()
+
+    x = center_x - text_w // 2
+    y = center_y - text_h // 2
+
+    draw_text_raster(pixel_array, font, text, x, y, color)

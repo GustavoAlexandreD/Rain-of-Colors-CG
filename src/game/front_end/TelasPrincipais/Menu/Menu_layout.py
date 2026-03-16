@@ -10,10 +10,7 @@ class MenuLayout:
 
         self._build_layout()
 
-
-    # ======================================================
-    # Constrói layout dos botões
-    # ======================================================
+    # ------------------------------------------------------
 
     def _build_layout(self):
 
@@ -27,17 +24,18 @@ class MenuLayout:
 
         self.buttons = []
 
-        for i in range(len(self.options)):
+        for i, option in enumerate(self.options):
 
             x = center_x - button_w // 2
             y = start_y + i * spacing
 
-            self.buttons.append((x, y, button_w, button_h))
+            self.buttons.append({
+                "rect": (x, y, button_w, button_h),
+                "text": option
+            })
 
-
-    # ======================================================
-    # Retorna botões
-    # ======================================================
+    # ------------------------------------------------------
 
     def get_buttons(self):
+
         return self.buttons
