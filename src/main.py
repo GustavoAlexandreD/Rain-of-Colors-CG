@@ -2,7 +2,7 @@ import pygame
 
 
 from game.scripts.Keyboard_Inputs import InputHandler
-from game.front_end.Menu import Menu
+from game.front_end.TelasPrincipais.Menu import Menu
 
 
 def main() -> None:

@@ -6,7 +6,9 @@ import pygame
 # ==========================================================
 
 class InputHandler:
+
     def __init__(self):
+
         # Movimento
         self.move_left = False
         self.move_right = False
@@ -32,6 +34,7 @@ class InputHandler:
     # ======================================================
 
     def update(self):
+
         # Reset de ações momentâneas
         self.activate_power = False
         self.menu_up = False
@@ -41,51 +44,58 @@ class InputHandler:
 
         for event in pygame.event.get():
 
+            # ---------------------------------
             # Fechar janela
+            # ---------------------------------
+
             if event.type == pygame.QUIT:
                 self.quit = True
 
-            # -------------------------
-            # TECLADO (pressionado)
-            # -------------------------
+            # ---------------------------------
+            # TECLADO (pressionou)
+            # ---------------------------------
+
             if event.type == pygame.KEYDOWN:
 
                 # Movimento
-                if event.key == pygame.K_LEFT:
+                if event.key == pygame.K_LEFT or event.key == pygame.K_a:
                     self.move_left = True
 
-                if event.key == pygame.K_RIGHT:
+                if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
                     self.move_right = True
 
                 # Poder especial
                 if event.key == pygame.K_SPACE:
                     self.activate_power = True
 
-                # Menu navegação
-                if event.key == pygame.K_UP:
+                # Navegação menu
+                if event.key == pygame.K_UP or event.key == pygame.K_w:
                     self.menu_up = True
 
-                if event.key == pygame.K_DOWN:
+                if event.key == pygame.K_DOWN or event.key == pygame.K_s:
                     self.menu_down = True
 
                 if event.key == pygame.K_RETURN:
                     self.menu_select = True
 
-            # -------------------------
+            # ---------------------------------
             # TECLADO (soltou tecla)
-            # -------------------------
+            # ---------------------------------
+
             if event.type == pygame.KEYUP:
 
-                if event.key == pygame.K_LEFT:
+                if event.key == pygame.K_LEFT or event.key == pygame.K_a:
                     self.move_left = False
 
-                if event.key == pygame.K_RIGHT:
+                if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
                     self.move_right = False
 
-            # -------------------------
+            # ---------------------------------
             # MOUSE
-            # -------------------------
+            # ---------------------------------
+
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 1:  # botão esquerdo
+
+                if event.button == 1:
                     self.mouse_click = True
                     self.mouse_pos = pygame.mouse.get_pos()
