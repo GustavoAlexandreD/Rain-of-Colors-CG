@@ -1,11 +1,11 @@
 import pygame
 import os
 
-from system.primitivas.Linha import line_bresenham
-from system.primitivas.Circulo import draw_circle_bresenham
-from system.primitivas.Elipse import ellipse_bresenham
-from system.preenchimento_e_textura.Preenchimento import scanline_fill_polygon
-from system.preenchimento_e_textura.Texture_Mapping import scanline_texture_polygon
+from src.system.primitivas.Linha import line_bresenham
+from src.system.primitivas.Circulo import draw_circle_bresenham
+from src.system.primitivas.Elipse import ellipse_bresenham
+from src.system.preenchimento_e_textura.Preenchimento import scanline_fill_polygon
+from src.system.preenchimento_e_textura.Texture_Mapping import scanline_texture_polygon
 
 
 class Menu:
