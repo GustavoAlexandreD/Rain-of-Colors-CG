@@ -2,15 +2,13 @@ import pygame
 
 from game.scripts.Keyboard_Inputs import InputHandler
 from game.front_end.TelasPrincipais.Menu.Menu import Menu
+from game.front_end.TelasPrincipais.Jogo.Jogo import Jogo
+from game.front_end.TelasPrincipais.Estatisticas.Estatisticas import Estatisticas
 
 
-def main() -> None:
+def main():
 
     pygame.init()
-
-    # ======================================================
-    # Tela na resolução do monitor
-    # ======================================================
 
     info = pygame.display.Info()
     WIDTH, HEIGHT = info.current_w, info.current_h
@@ -20,60 +18,76 @@ def main() -> None:
 
     clock = pygame.time.Clock()
 
-    # ======================================================
-    # Sistemas do jogo
-    # ======================================================
-
     input_handler = InputHandler()
+
+    # ==========================
+    # Telas
+    # ==========================
+
     menu = Menu(WIDTH, HEIGHT)
+    game = Jogo(WIDTH, HEIGHT)
+    statistics = Estatisticas(WIDTH, HEIGHT)
+
+    # Estado atual
+    current_screen = "menu"
 
     running = True
-
-    # ======================================================
-    # Loop principal
-    # ======================================================
 
     while running:
 
         clock.tick(60)
-
-        # ----------------------------------------------
-        # Atualiza input
-        # ----------------------------------------------
 
         input_handler.update()
 
         if input_handler.quit:
             running = False
 
-        # ----------------------------------------------
-        # Atualiza menu
-        # ----------------------------------------------
+        # =====================================
+        # UPDATE
+        # =====================================
 
-        option = menu.update(input_handler)
+        if current_screen == "menu":
 
-        if option == "SAIR":
-            running = False
+            option = menu.update(input_handler)
 
-        if option == "JOGAR":
-            print("Iniciar jogo")
+            if option == "JOGAR":
+                current_screen = "game"
 
-        # ----------------------------------------------
-        # Render
-        # ----------------------------------------------
+            elif option == "ESTATISTICA":
+                current_screen = "statistics"
+
+            elif option == "SAIR":
+                running = False
+
+        elif current_screen == "game":
+
+            if game.update(input_handler):
+                current_screen = "menu"
+
+        elif current_screen == "statistics":
+
+            if statistics.update(input_handler):
+                current_screen = "menu"
+
+        # =====================================
+        # DRAW
+        # =====================================
 
         screen.fill((0, 0, 0))
 
-        menu.draw(screen)
+        if current_screen == "menu":
+            menu.draw(screen)
+
+        elif current_screen == "game":
+            game.draw(screen)
+
+        elif current_screen == "statistics":
+            statistics.draw(screen)
 
         pygame.display.flip()
 
     pygame.quit()
 
-
-# ==========================================================
-# Entry point
-# ==========================================================
 
 if __name__ == "__main__":
     main()
