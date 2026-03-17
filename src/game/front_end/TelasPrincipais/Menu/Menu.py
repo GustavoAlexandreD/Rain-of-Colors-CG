@@ -2,7 +2,7 @@ import pygame
 
 from game.front_end.TelasPrincipais.Menu.Menu_layout import MenuLayout
 from game.front_end.TelasPrincipais.Menu.Menu_controller import MenuController
-from src.system.primitivas.Linha import line_bresenham
+from system.primitivas.Linha import line_bresenham
 from game.front_end.Componentes.Button import Button
 from game.front_end.Componentes.Text import draw_text_centered
 from game.front_end.Componentes.Background import Background
