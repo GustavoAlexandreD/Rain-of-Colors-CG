@@ -31,6 +31,8 @@ class Menu:
             "assets/images/MenuBackground.jpeg"
         )
 
+        self.background.render_once()
+
         # ==================================================
         # Layout e controller
         # ==================================================
@@ -122,11 +124,8 @@ class Menu:
 
     def draw(self, surface):
 
-        # 1️⃣ desenha background
+        # 1️⃣ background (rápido agora)
         self.background.draw(surface)
-
-        # 2️⃣ desenha botões
-        pixel_array = pygame.PixelArray(surface)
 
         selected_index = self.controller.get_selected_index()
 
@@ -134,12 +133,11 @@ class Menu:
 
             button.surface = surface
 
-            if i == selected_index:
-                selected = True
-            else:
-                selected = False
+            selected = (i == selected_index)
 
             self.draw_button(button, selected)
+
+            pixel_array = pygame.PixelArray(surface)
 
             draw_text_centered(
                 pixel_array,

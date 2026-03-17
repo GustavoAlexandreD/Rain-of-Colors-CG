@@ -1,6 +1,4 @@
 import pygame
-import os
-
 from system.preenchimento_e_textura.Texture_Mapping import scanline_texture_polygon
 
 
@@ -15,13 +13,13 @@ class Background:
         # Carrega textura
         # ==============================
 
-        self.texture = pygame.image.load("assets\\images\\MenuBackground.jpeg").convert_alpha()
+        self.texture = pygame.image.load(image_path).convert_alpha()
 
         self.tex_w = self.texture.get_width()
         self.tex_h = self.texture.get_height()
 
         # ==============================
-        # Converte para matriz (otimiza acesso)
+        # Converte para matriz (1x só)
         # ==============================
 
         self.texture_matrix = [
@@ -29,13 +27,24 @@ class Background:
             for x in range(self.tex_w)
         ]
 
+        # ==============================
+        # 🔥 CACHE (ESSENCIAL)
+        # ==============================
+
+        self.cached_surface = pygame.Surface((width, height)).convert()
+
+        self._is_rendered = False
+
     # ======================================================
-    # Render do background
+    # 🔥 RENDERIZA UMA ÚNICA VEZ
     # ======================================================
 
-    def draw(self, surface):
+    def render_once(self):
 
-        pixel_array = pygame.PixelArray(surface)
+        if self._is_rendered:
+            return
+
+        pixel_array = pygame.PixelArray(self.cached_surface)
 
         vertices_uv = [
             (0, 0, 0, 0),
@@ -56,3 +65,17 @@ class Background:
         )
 
         del pixel_array
+
+        self._is_rendered = True
+
+    # ======================================================
+    # DESENHO (SUPER RÁPIDO)
+    # ======================================================
+
+    def draw(self, surface):
+
+        # garante que renderizou pelo menos 1 vez
+        if not self._is_rendered:
+            self.render_once()
+
+        surface.blit(self.cached_surface, (0, 0))
