@@ -1,6 +1,7 @@
 from system.primitivas.Circulo import draw_circle_bresenham
 from system.primitivas.Linha import line_bresenham
-from system.preenchimento_e_textura.Preenchimento import flood_fill
+from system.preenchimento_e_textura.Preenchimento import flood_fill, scanline_fill_polygon
+import math
 
 
 class Coracoes:
@@ -69,11 +70,37 @@ class Coracoes:
         # garante topo fechado aproximando entre as duas circunferências
         line_bresenham(self.surface, left_cx - r, cy, right_cx + r, cy, color)
 
-        # preenche o interior usando flood fill a partir de um ponto interno
-        seed_x = cx
-        seed_y = cy + int(size * 0.05)
+        # preenche o interior usando scanline_fill_polygon para cada lóbulo + triângulo
         try:
-            flood_fill(self.surface, seed_x, seed_y, color)
+            # aproximar cada circunferência por um polígono regular
+            def circle_polygon(cx0, cy0, radius, steps=24):
+                verts = []
+                for i in range(steps):
+                    theta = 2 * math.pi * i / steps
+                    vx = cx0 + radius * math.cos(theta)
+                    vy = cy0 + radius * math.sin(theta)
+                    verts.append((int(round(vx)), int(round(vy))))
+                return verts
+
+            left_poly = circle_polygon(left_cx, top_cy, r, steps=24)
+            right_poly = circle_polygon(right_cx, top_cy, r, steps=24)
+
+            # triângulo inferior que forma a ponta do coração
+            tri = [
+                (left_cx - r, cy),
+                (bottom_x, bottom_y),
+                (right_cx + r, cy)
+            ]
+
+            # usar scanline fill (mais eficiente que flood_fill para polígonos)
+            scanline_fill_polygon(self.surface, left_poly, color)
+            scanline_fill_polygon(self.surface, right_poly, color)
+            scanline_fill_polygon(self.surface, tri, color)
         except Exception:
-            # se o flood_fill falhar por qualquer razão, apenas ignore
-            pass
+            # fallback para flood_fill caso ocorra algum problema
+            try:
+                seed_x = cx
+                seed_y = cy + int(size * 0.05)
+                flood_fill(self.surface, seed_x, seed_y, color)
+            except Exception:
+                pass

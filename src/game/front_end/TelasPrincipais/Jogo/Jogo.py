@@ -4,6 +4,7 @@ from game.front_end.Componentes.Background import Background
 from game.front_end.TelasPrincipais.Jogo.Jogo_layout import JogoLayout
 from game.front_end.TelasPrincipais.Jogo.Jogo_controller import JogoController
 from game.front_end.Componentes.Text import draw_text_raster
+from game.front_end.Componentes.Coracoes import Coracoes
 
 
 class Jogo:
@@ -39,6 +40,12 @@ class Jogo:
 
         self.background.draw(surface)
 
+        # desenha os corações usando a posição fornecida pelo layout
+        top_left = self.layout.get_top_left(70, 60)
+        coracoes = Coracoes(surface, pos=top_left, spacing=40, size=32)
+        coracoes.draw()
+
+        # depois desenha o texto via PixelArray
         pixel_array = pygame.PixelArray(surface)
 
         cx, cy = self.layout.get_center()
