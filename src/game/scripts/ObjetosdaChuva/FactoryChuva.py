@@ -11,7 +11,7 @@ class FactoryChuva:
 
         rand = random.random()
 
-        if rand < 0.7:
+        if rand < 0.88:
             return Gota(x, y)
 
         elif rand < 0.9:

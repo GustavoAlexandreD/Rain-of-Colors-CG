@@ -1,6 +1,9 @@
 import random
+import math
 import pygame
 from .Objeto import Objeto
+from system.primitivas.Circulo import draw_circle_bresenham
+from system.preenchimento_e_textura.Preenchimento import scanline_fill_polygon
 
 class Gota(Objeto):
 
@@ -14,17 +17,28 @@ class Gota(Objeto):
 
     def __init__(self, x, y, speed=2):
         color = random.choice(self.COLORS)
-        super().__init__(x, y, color, speed, radius=6)
+        # aumentar consideravelmente o tamanho das gotas
+        super().__init__(x, y, color, speed, radius=18)
 
     def draw(self, screen):
 
         # corpo da gota
-        pygame.draw.circle(
-            screen,
-            self.color,
-            (int(self.x), int(self.y)),
-            self.radius
-        )
+        # approximar círculo por polígono e preencher
+        def circle_poly(cx, cy, r, steps=24):
+            pts = []
+            for i in range(steps):
+                theta = 2 * math.pi * i / steps
+                px = int(round(cx + r * math.cos(theta)))
+                py = int(round(cy + r * math.sin(theta)))
+                pts.append((px, py))
+            return pts
+
+        poly = circle_poly(self.x, self.y, self.radius, steps=24)
+        try:
+            scanline_fill_polygon(screen, poly, self.color)
+        except Exception:
+            # fallback: desenhar contorno
+            draw_circle_bresenham(screen, int(self.x), int(self.y), self.radius, self.color)
 
     def on_collect(self, game_state):
 
