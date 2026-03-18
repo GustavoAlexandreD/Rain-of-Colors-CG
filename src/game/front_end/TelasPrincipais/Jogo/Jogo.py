@@ -1,5 +1,6 @@
 import pygame
 
+from game.front_end.helper.responsive import Responsive
 from game.front_end.Componentes.Background import Background
 from game.front_end.TelasPrincipais.Jogo.Jogo_layout import JogoLayout
 from game.front_end.TelasPrincipais.Jogo.Jogo_controller import JogoController
@@ -15,9 +16,8 @@ class Jogo:
         self.width = width
         self.height = height
 
-        # ==================================================
-        # Background
-        # ==================================================
+        self.resp = Responsive(width, height)
+
         self.background = Background(
             width,
             height,
@@ -25,59 +25,52 @@ class Jogo:
         )
         self.background.render_once()
 
-        # ==================================================
-        # Layout e Controller
-        # ==================================================
         self.layout = JogoLayout(width, height)
         self.controller = JogoController()
 
-        # ==================================================
-        # CONFIGURAÇÃO DA CHUVA (IMPORTANTE)
-        # pula 60px da esquerda e 600px da direita
-        # ==================================================
-        self.layout.set_rain_area_with_margins(
-            left_margin=60,
-            right_margin=660,
-            spawn_above=160
-        )
+        # Chuva responsiva
+        self.layout.set_rain_area_with_margins()
 
-        # ==================================================
-        # Rain
-        # ==================================================
         self.rain = Rain(width, height)
 
         x_min, x_max, spawn_above = self.layout.get_rain_area()
         self.rain.set_area(x_min, x_max, spawn_above)
 
-        # ==================================================
-        # Fonte
-        # ==================================================
-        self.font = pygame.font.Font("assets/fonts/ThaleahFat.ttf", 48)
+        # Fonte responsiva
+        self.font = pygame.font.Font(
+            "assets/fonts/ThaleahFat.ttf",
+            self.resp.font(48)
+        )
 
-    # ==================================================
-    # UPDATE
-    # ==================================================
     def update(self, input_handler):
         self.rain.update()
         return self.controller.update(input_handler)
 
-    # ==================================================
-    # DRAW
-    # ==================================================
     def draw(self, surface):
 
-        # background
         self.background.draw(surface)
 
-        # chuva (antes da UI)
         self.rain.draw(surface)
 
-        # corações
-        top_left = self.layout.get_top_left(70, 60)
-        coracoes = Coracoes(surface, pos=top_left, spacing=40, size=32)
-        coracoes.draw()
+        # UI
+        base_x, base_y = self.layout.get_top_left()
 
-        # texto via rasterização
+        # pequeno ajuste fino (responsivo)
+        offset_x = self.resp.s(10)
+        offset_y = self.resp.s(10)
+
+        top_left = (base_x + offset_x, base_y + offset_y)
+
+        heart_size = self.resp.s(26)  # baseado na escala
+        heart_spacing = self.resp.s(30)
+
+        Coracoes(
+            surface,
+            pos=top_left,
+            spacing=heart_spacing,
+            size=heart_size
+        ).draw()
+
         pixel_array = pygame.PixelArray(surface)
 
         cx, cy = self.layout.get_center()
@@ -86,7 +79,7 @@ class Jogo:
             pixel_array,
             self.font,
             "GAME RUNNING",
-            cx - 200,
+            cx - self.resp.wp(0.1),
             cy,
             (255, 255, 255)
         )

@@ -1,33 +1,34 @@
+from game.front_end.helper.responsive import Responsive
+
+
 class MenuLayout:
 
     def __init__(self, width, height, options):
-
         self.width = width
         self.height = height
         self.options = options
 
+        self.resp = Responsive(width, height)
+
         self.buttons = []
-
         self._build_layout()
-
-    # ------------------------------------------------------
 
     def _build_layout(self):
 
-        center_x = self.width // 2
-        center_y = self.height // 2
+        cx = self.width // 2
 
-        start_y = center_y + 100
-        spacing = 80
+        # Responsivo
+        button_w = self.resp.wp(0.18)
+        button_h = self.resp.hp(0.07)
 
-        button_w = 260
-        button_h = 50
+        spacing = self.resp.hp(0.09)
+        start_y = self.resp.hp(0.55)
 
         self.buttons = []
 
         for i, option in enumerate(self.options):
 
-            x = center_x - button_w // 2
+            x = cx - button_w // 2
             y = start_y + i * spacing
 
             self.buttons.append({
@@ -35,8 +36,5 @@ class MenuLayout:
                 "text": option
             })
 
-    # ------------------------------------------------------
-
     def get_buttons(self):
-
         return self.buttons

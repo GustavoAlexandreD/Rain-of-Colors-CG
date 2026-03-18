@@ -13,7 +13,7 @@ def main():
     info = pygame.display.Info()
     WIDTH, HEIGHT = info.current_w, info.current_h
 
-    screen = pygame.display.set_mode((WIDTH, HEIGHT))
+    screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.RESIZABLE)
     pygame.display.set_caption("Rain Of Colors")
 
     clock = pygame.time.Clock()

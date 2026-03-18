@@ -1,5 +1,6 @@
 import pygame
 
+from game.front_end.helper.responsive import Responsive
 from game.front_end.TelasPrincipais.Menu.Menu_layout import MenuLayout
 from game.front_end.TelasPrincipais.Menu.Menu_controller import MenuController
 from system.primitivas.Linha import line_bresenham
@@ -15,119 +16,81 @@ class Menu:
         self.width = width
         self.height = height
 
-        self.options = [
-            "JOGAR",
-            "ESTATISTICA",
-            "SAIR"
-        ]
+        self.resp = Responsive(width, height)
 
-        # ==================================================
+        self.options = ["JOGAR", "ESTATISTICA", "SAIR"]
+
         # Background
-        # ==================================================
-
         self.background = Background(
             width,
             height,
             "assets/images/MenuBackground.jpeg"
         )
-
         self.background.render_once()
-
-        # ==================================================
-        # Layout e controller
-        # ==================================================
 
         self.layout = MenuLayout(width, height, self.options)
         self.controller = MenuController(self.options)
 
-        # ==================================================
-        # Botões
-        # ==================================================
-
         self.buttons = []
         self._create_buttons()
 
-        # Fonte
-        self.font = pygame.font.Font("assets/fonts/ThaleahFat.ttf", 36)
-
-    # ======================================================
-    # Cria botões
-    # ======================================================
+        # Fonte responsiva
+        self.font = pygame.font.Font(
+            "assets/fonts/ThaleahFat.ttf",
+            self.resp.font(48)
+        )
 
     def _create_buttons(self):
 
-        buttons_layout = self.layout.get_buttons()
-
-        for btn in buttons_layout:
+        for btn in self.layout.get_buttons():
 
             x, y, w, h = btn["rect"]
 
-            button = Button(
-                None,
-                x,
-                y,
-                w,
-                h,
-                btn["text"]
+            self.buttons.append(
+                Button(None, x, y, w, h, btn["text"])
             )
 
-            self.buttons.append(button)
-    
     def draw_button(self, button, selected):
 
         x, y, w, h = button.x, button.y, button.width, button.height
 
-        # Cores
         color_bg = (70, 70, 100) if selected else (45, 50, 65)
-        color_border_outer = (0, 0, 0)
-        color_border_inner = (150, 155, 170)
-        color_shadow_inner = (30, 35, 45)
 
-        button = Button(button.surface, x, y, w, h)
         button.fill(color_bg)
-        button.draw(color_border_outer, 3)
+        button.draw((0, 0, 0), self.resp.s(3))
 
-        # Cantos chanfrados
-        c = 4
+        c = self.resp.s(4)
 
-        # Linha de luz (topo)
+        # Luz topo
         line_bresenham(
             button.surface,
             x + c,
-            y + 2,
+            y + self.resp.s(2),
             x + w - c,
-            y + 2,
-            color_border_inner
+            y + self.resp.s(2),
+            (150, 155, 170)
         )
 
-        # Linha de sombra (base)
+        # Sombra base
         line_bresenham(
             button.surface,
             x + c,
-            y + h - 2,
+            y + h - self.resp.s(2),
             x + w - c,
-            y + h - 2,
-            color_shadow_inner
+            y + h - self.resp.s(2),
+            (30, 35, 45)
         )
-
-    # ======================================================
-    # Update
-    # ======================================================
 
     def update(self, input_handler):
-
         return self.controller.update(input_handler)
-
-    # ======================================================
-    # Draw
-    # ======================================================
 
     def draw(self, surface):
 
-        # 1️⃣ background (rápido agora)
         self.background.draw(surface)
 
         selected_index = self.controller.get_selected_index()
+
+        pixel_array = pygame.PixelArray(surface)
 
         for i, button in enumerate(self.buttons):
 
@@ -136,8 +99,6 @@ class Menu:
             selected = (i == selected_index)
 
             self.draw_button(button, selected)
-
-            pixel_array = pygame.PixelArray(surface)
 
             draw_text_centered(
                 pixel_array,
