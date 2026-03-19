@@ -1,10 +1,6 @@
 import pygame
 import sys
-from system.primitivas.SetPixel import set_pixel
-from game.scripts.ObjetosdaChuva.Bomba import Bomba
-from game.scripts.ObjetosdaChuva.Estrela import Estrela
-from game.scripts.ObjetosdaChuva.Gota import Gota
-from game.front_end.Componentes.Button import Button
+from src.game.scripts.player.balde import Balde
 
 pygame.init()
 
@@ -26,10 +22,9 @@ while rodando:
             rodando = False
     surface.fill((255,255,255))
     #V Insira a função de teste aqui V
-    botao = Button(surface, 200, 150, 100, 50)
-    botao.fill((211,211,211))
-    botao.draw((0,0,0), 3)
-    
+    balde = Balde(100, 100)
+    balde.fill(surface)
+    balde.draw(surface, (0,0,0), 3)
 
     pygame.display.flip()
 pygame.quit()
