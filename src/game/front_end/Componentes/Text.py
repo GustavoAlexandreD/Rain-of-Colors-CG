@@ -1,7 +1,5 @@
 from typing import Literal
 
-import pygame
-
 def draw_text_raster(pixel_array, font, text, x, y, color, orientation: Literal["center"]| None = None):
         """
         Renderiza texto desenhando pixel por pixel.
@@ -43,7 +41,7 @@ def draw_text_raster(pixel_array, font, text, x, y, color, orientation: Literal[
 # Texto centralizado dentro de um objeto
 # ------------------------------------------------------
 
-def draw_text_centered(pixel_array, font, text, object, color, orientation: str = "middle_center"):
+def draw_text_centered(pixel_array, font, text, object, color, orientation: Literal["middle_center","top_center"] | None = "middle_center"):
 
     text_surface = font.render(text, True, color)
 

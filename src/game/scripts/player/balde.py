@@ -15,9 +15,6 @@ class Balde():
         self.height = height
         self.top_width = top_width
         self.base_width = base_width
-        self.active = True
-
-        self.controller = BaldeController()
 
         center = x + top_width / 2
 
@@ -29,6 +26,8 @@ class Balde():
             (center, y + height),                       # base centro
             (center - base_width / 2, y + height - 2)   # base esquerda
         ]
+
+        self.controller = BaldeController()
 
     def update(self, input_handler):
         """
