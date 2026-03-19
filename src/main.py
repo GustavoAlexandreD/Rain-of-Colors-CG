@@ -66,12 +66,13 @@ def main():
 
             if game.update(input_handler):
                 current_screen = "menu"
-                pygame.event.clear()
+                game = None
 
         elif current_screen == "statistics":
 
             if statistics.update(input_handler):
                 current_screen = "menu"
+                statistics = None
 
         # =====================================
         # DRAW
@@ -82,10 +83,10 @@ def main():
         if current_screen == "menu":
             menu.draw(screen)
 
-        elif current_screen == "game":
+        elif current_screen == "game" and game is not None:
             game.draw(screen)
 
-        elif current_screen == "statistics":
+        elif current_screen == "statistics" and statistics is not None:
             statistics.draw(screen)
 
         pygame.display.flip()
