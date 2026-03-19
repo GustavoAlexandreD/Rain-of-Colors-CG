@@ -21,35 +21,29 @@ def draw_circle_bresenham(surface, cx, cy, radius, color, boundary_thickness: in
     Desenha um círculo usando o algoritmo de Bresenham (Midpoint).
     cx, cy -> centro
     radius -> raio
+    color -> cor da borda
+    boundary_thickness -> espessura da borda
     """
     if boundary_thickness <= 0:
         boundary_thickness = 1
 
     vertices = []
-    for i in range(boundary_thickness):
-        x = 0
-        y = radius + i
-        d = 1 - radius  # parâmetro de decisão inicial
+    x = 0
+    y = radius 
+    d = 1 - radius  # parâmetro de decisão inicial
 
-        while x <= y:
-            # 8 pontos simétricos
-            set_pixel(surface, cx + x, cy + y, color)
-            set_pixel(surface, cx - x, cy + y, color)
-            set_pixel(surface, cx + x, cy - y, color)
-            set_pixel(surface, cx - x, cy - y, color)
-            set_pixel(surface, cx + y, cy + x, color)
-            set_pixel(surface, cx - y, cy + x, color)
-            set_pixel(surface, cx + y, cy - x, color)
-            set_pixel(surface, cx - y, cy - x, color)
-
-            x += 1
-
-            if d < 0:
-                d += 2 * x + 1
-            else:
-                y -= 1
-                d += 2 * (x - y) + 1
-
+    while x <= y:
+        # 8 pontos simétricos
+        for i in range(boundary_thickness):
+            y_temp = y + i
+            set_pixel(surface, cx + x, cy + y_temp, color)
+            set_pixel(surface, cx - x, cy + y_temp, color)
+            set_pixel(surface, cx + x, cy - y_temp, color)
+            set_pixel(surface, cx - x, cy - y_temp, color)
+            set_pixel(surface, cx + y_temp, cy + x, color)
+            set_pixel(surface, cx - y_temp, cy + x, color)
+            set_pixel(surface, cx + y_temp, cy - x, color)
+            set_pixel(surface, cx - y_temp, cy - x, color)
             if i == 0:
                 vertices.append((cx + x, cy + y))
                 vertices.append((cx - x, cy + y))
@@ -59,6 +53,14 @@ def draw_circle_bresenham(surface, cx, cy, radius, color, boundary_thickness: in
                 vertices.append((cx - y, cy + x))
                 vertices.append((cx + y, cy - x))
                 vertices.append((cx - y, cy - x))
+
+        x += 1
+
+        if d < 0:
+            d += 2 * x + 1
+        else:
+            y -= 1
+            d += 2 * (x - y) + 1
 
     return vertices
 

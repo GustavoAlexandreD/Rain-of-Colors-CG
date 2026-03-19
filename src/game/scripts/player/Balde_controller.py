@@ -1,8 +1,7 @@
 class BaldeController:
 
-    def __init__(self, options):
+    def __init__(self):
 
-        self.options = options
         self.selected = 0
 
 
@@ -19,10 +18,6 @@ class BaldeController:
         # Navegação para esquerda
         if input_handler.move_left:
             self.selected = (self.selected + 1) % len(self.options)
-
-        # Selecionar opção
-        if input_handler.menu_select:
-            return self.options[self.selected]
 
         return None
 

@@ -1,6 +1,6 @@
 import pygame
 import sys
-from src.game.scripts.player.balde import Balde
+from src.game.scripts.player.Balde import Balde
 
 pygame.init()
 
@@ -22,7 +22,7 @@ while rodando:
             rodando = False
     surface.fill((255,255,255))
     #V Insira a função de teste aqui V
-    balde = Balde(100, 100)
+    balde = Balde(100, 100, 200, 150, 100)
     balde.fill(surface)
     balde.draw(surface, (0,0,0), 3)
 
