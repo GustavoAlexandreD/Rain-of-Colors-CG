@@ -39,5 +39,6 @@ class Bomba(Objeto):
             pass
 
     def on_collect(self, game_state):
-
-        game_state.lives = 0
+        # mata direto
+        while game_state.perder_vida():
+            pass

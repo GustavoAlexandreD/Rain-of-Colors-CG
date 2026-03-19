@@ -40,5 +40,4 @@ class Estrela(Objeto):
                 line_bresenham(screen, x0, y0, x1, y1, self.color)
 
     def on_collect(self, game_state):
-        game_state.star_power = True
-        game_state.star_timer = 300
+        game_state.activate_star(300)

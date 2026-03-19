@@ -50,4 +50,4 @@ class Gota(Objeto):
         if self.color == game_state.current_color or game_state.star_power:
             game_state.score += 10
         else:
-            game_state.lives -= 1
+            game_state.perder_vida()
