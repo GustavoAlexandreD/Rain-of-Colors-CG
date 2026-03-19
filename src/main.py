@@ -24,9 +24,10 @@ def main():
     # Telas
     # ==========================
 
+    pontuations = ["000000", "000000", "000000", "000000", "000000", "000000", "000000", "000000", "000000", "000000"]
     menu = Menu(WIDTH, HEIGHT)
     game = Jogo(WIDTH, HEIGHT)
-    statistics = Estatisticas(WIDTH, HEIGHT)
+    statistics = Estatisticas(WIDTH, HEIGHT, pontuations)
 
     # Estado atual
     current_screen = "menu"

@@ -1,6 +1,6 @@
 import pygame
 
-def draw_text_raster(pixel_array, font, text, x, y, color):
+def draw_text_raster(pixel_array, font, text, x, y, color, orientation: str | None = None):
         """
         Renderiza texto desenhando pixel por pixel.
 
@@ -10,6 +10,7 @@ def draw_text_raster(pixel_array, font, text, x, y, color):
             text: A string a ser escrita.
             x, y: Posição superior esquerda.
             color: A cor do texto.
+            orientation: Se for dada por center, o valor de x representa o centro da tela, logo, é preciso ajustar o x para representar o canto superior esquerdo da palavra. Fazendo a palavra ficar centralizada. Por default é dado por None.
         """
         # Renderiza o texto numa superfície temporária (na memória, não na tela)
         text_surface = font.render(text, True, color)
@@ -17,6 +18,9 @@ def draw_text_raster(pixel_array, font, text, x, y, color):
 
         # Obtém dimensões da tela para evitar erro de índice
         screen_w, screen_h = pixel_array.shape
+
+        if orientation == "center":
+            x = x - text_surface.get_width()//2
 
         # Itera sobre os pixels da superfície do texto
         for px in range(w):
@@ -34,19 +38,26 @@ def draw_text_raster(pixel_array, font, text, x, y, color):
                         pixel_array[draw_x, draw_y] = curr_color
 
 # ------------------------------------------------------
-# Texto centralizado dentro de botão
+# Texto centralizado dentro de um objeto
 # ------------------------------------------------------
 
-def draw_text_centered(pixel_array, font, text, button, color):
+def draw_text_centered(pixel_array, font, text, object, color, orientation: str = "middle_center"):
 
     text_surface = font.render(text, True, color)
 
     text_w = text_surface.get_width()
     text_h = text_surface.get_height()
 
-    center_x, center_y = button.get_center()
+    center_x, center_y = object.get_center()
 
-    x = center_x - text_w // 2
-    y = center_y - text_h // 2
+    if orientation == "middle_center":
+        x = center_x - text_w // 2
+        y = center_y - text_h // 2
 
-    draw_text_raster(pixel_array, font, text, x, y, color)
+        draw_text_raster(pixel_array, font, text, x, y, color)
+    elif orientation == "top_center":
+        x = center_x - text_w // 2
+        y = text_h
+
+        draw_text_raster(pixel_array, font, text, x, y, color)
+         
