@@ -6,7 +6,9 @@ from game.front_end.TelasPrincipais.Jogo.Jogo_layout import JogoLayout
 from game.front_end.TelasPrincipais.Jogo.Jogo_controller import JogoController
 from game.front_end.Componentes.Text import draw_text_raster
 from game.front_end.Componentes.Coracoes import Coracoes
+from src.system.primitivas.Circulo import draw_circle_bresenham, draw_filled_circle_bresenham
 from game.scripts.Rain import Rain
+from system.preenchimento_e_textura.Preenchimento import boundary_fill, scanline_fill
 
 
 class Jogo:
@@ -21,7 +23,7 @@ class Jogo:
         self.background = Background(
             width,
             height,
-            "assets/images/JogoBackground.jpeg"
+            "assets/images/PlainBackground.jpeg"
         )
         self.background.render_once()
 
@@ -39,7 +41,7 @@ class Jogo:
         # Fonte responsiva
         self.font = pygame.font.Font(
             "assets/fonts/ThaleahFat.ttf",
-            self.resp.font(48)
+            self.resp.font(68)
         )
 
     def update(self, input_handler):
@@ -62,7 +64,7 @@ class Jogo:
         top_left = (base_x + offset_x, base_y + offset_y)
 
         heart_size = self.resp.s(26)  # baseado na escala
-        heart_spacing = self.resp.s(30)
+        heart_spacing = self.resp.s(35)
 
         Coracoes(
             surface,
@@ -71,7 +73,31 @@ class Jogo:
             size=heart_size
         ).draw()
 
+        minimo = min(int(self.width), int(self.height))
+        radius = minimo // 12
+        margin = minimo // 5
+
+        draw_filled_circle_bresenham(
+            surface,
+            self.width - margin,
+            self.height - margin,
+            radius,
+            fill_color=(255, 255, 255),
+            boundary_color=(0, 0, 0),
+            boundary_thickness=6,
+        )
+
         pixel_array = pygame.PixelArray(surface)
+
+        draw_text_raster(
+            pixel_array,
+            self.font,
+            "COR",
+            self.width - margin,
+            self.height - margin - 2*radius,
+            (255, 255, 255),
+            "center"
+        )
 
         cx, cy = self.layout.get_center()
 

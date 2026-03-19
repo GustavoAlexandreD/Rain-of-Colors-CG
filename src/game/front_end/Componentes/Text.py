@@ -1,6 +1,8 @@
+from typing import Literal
+
 import pygame
 
-def draw_text_raster(pixel_array, font, text, x, y, color, orientation: str | None = None):
+def draw_text_raster(pixel_array, font, text, x, y, color, orientation: Literal["center"]| None = None):
         """
         Renderiza texto desenhando pixel por pixel.
 
