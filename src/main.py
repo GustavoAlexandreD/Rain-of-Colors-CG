@@ -26,8 +26,8 @@ def main():
 
     pontuations = ["000000", "000000", "000000", "000000", "000000", "000000", "000000", "000000", "000000", "000000"]
     menu = Menu(WIDTH, HEIGHT)
-    game = Jogo(WIDTH, HEIGHT)
-    statistics = Estatisticas(WIDTH, HEIGHT, pontuations)
+    game = None
+    statistics = None
 
     # Estado atual
     current_screen = "menu"
@@ -53,9 +53,11 @@ def main():
 
             if option == "JOGAR":
                 current_screen = "game"
+                game = Jogo(WIDTH, HEIGHT)
 
             elif option == "ESTATISTICA":
                 current_screen = "statistics"
+                statistics = Estatisticas(WIDTH, HEIGHT, pontuations)
 
             elif option == "SAIR":
                 running = False
@@ -64,6 +66,7 @@ def main():
 
             if game.update(input_handler):
                 current_screen = "menu"
+                pygame.event.clear()
 
         elif current_screen == "statistics":
 

@@ -5,7 +5,7 @@ class StatisticsController:
 
     def update(self, input_handler):
 
-        if input_handler.menu_select:
+        if input_handler.menu_back:
             self.exit_stats = True
 
         return self.exit_stats
