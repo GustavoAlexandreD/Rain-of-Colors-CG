@@ -5,7 +5,6 @@ from game.front_end.TelasPrincipais.Menu.Menu import Menu
 from game.front_end.TelasPrincipais.Jogo.Jogo import Jogo
 from game.front_end.TelasPrincipais.Estatisticas.Estatisticas import Estatisticas
 
-
 def main():
 
     pygame.init()

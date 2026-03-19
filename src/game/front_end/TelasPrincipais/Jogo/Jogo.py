@@ -6,9 +6,9 @@ from game.front_end.TelasPrincipais.Jogo.Jogo_layout import JogoLayout
 from game.front_end.TelasPrincipais.Jogo.Jogo_controller import JogoController
 from game.front_end.Componentes.Text import draw_text_raster
 from game.front_end.Componentes.Coracoes import Coracoes
-from src.system.primitivas.Circulo import draw_circle_bresenham, draw_filled_circle_bresenham
-from game.scripts.Rain import Rain
+from system.primitivas.Circulo import draw_circle_bresenham, draw_filled_circle_bresenham
 from system.preenchimento_e_textura.Preenchimento import boundary_fill, scanline_fill
+from game.scripts.rain import Rain
 
 
 class Jogo:

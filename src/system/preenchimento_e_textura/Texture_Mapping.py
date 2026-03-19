@@ -8,7 +8,7 @@ Requisitos:
 - uvs: [(u,v), ...]  valores normalizados (0 a 1)
 """
 
-from src.system.primitivas.SetPixel import set_pixel
+from system.primitivas.SetPixel import set_pixel
 
 
 # ============================================================
