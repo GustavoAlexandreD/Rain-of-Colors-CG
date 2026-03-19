@@ -24,9 +24,10 @@ def main():
     # Telas
     # ==========================
 
+    pontuations = ["000000", "000000", "000000", "000000", "000000", "000000", "000000", "000000", "000000", "000000"]
     menu = Menu(WIDTH, HEIGHT)
-    game = Jogo(WIDTH, HEIGHT)
-    statistics = Estatisticas(WIDTH, HEIGHT)
+    game = None
+    statistics = None
 
     # Estado atual
     current_screen = "menu"
@@ -52,9 +53,11 @@ def main():
 
             if option == "JOGAR":
                 current_screen = "game"
+                game = Jogo(WIDTH, HEIGHT)
 
             elif option == "ESTATISTICA":
                 current_screen = "statistics"
+                statistics = Estatisticas(WIDTH, HEIGHT, pontuations)
 
             elif option == "SAIR":
                 running = False
@@ -63,11 +66,13 @@ def main():
 
             if game.update(input_handler):
                 current_screen = "menu"
+                game = None
 
         elif current_screen == "statistics":
 
             if statistics.update(input_handler):
                 current_screen = "menu"
+                statistics = None
 
         # =====================================
         # DRAW
@@ -78,10 +83,10 @@ def main():
         if current_screen == "menu":
             menu.draw(screen)
 
-        elif current_screen == "game":
+        elif current_screen == "game" and game is not None:
             game.draw(screen)
 
-        elif current_screen == "statistics":
+        elif current_screen == "statistics" and statistics is not None:
             statistics.draw(screen)
 
         pygame.display.flip()

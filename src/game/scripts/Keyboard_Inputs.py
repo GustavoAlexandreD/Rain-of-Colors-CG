@@ -21,6 +21,9 @@ class InputHandler:
         self.menu_down = False
         self.menu_select = False
 
+        #Navegação entre telas
+        self.escape = False
+
         # Mouse
         self.mouse_click = False
         self.mouse_pos = (0, 0)
@@ -41,6 +44,7 @@ class InputHandler:
         self.menu_down = False
         self.menu_select = False
         self.mouse_click = False
+        self.menu_back = False
 
         for event in pygame.event.get():
 
@@ -77,6 +81,9 @@ class InputHandler:
 
                 if event.key == pygame.K_RETURN:
                     self.menu_select = True
+
+                if event.key == pygame.K_ESCAPE:
+                    self.menu_back = True
 
             # ---------------------------------
             # TECLADO (soltou tecla)
