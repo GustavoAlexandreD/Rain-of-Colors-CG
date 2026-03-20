@@ -76,6 +76,6 @@ class Gota(Objeto):
     def on_collect(self, game_state):
 
         if self.color == game_state.current_color or game_state.star_power:
-            game_state.score += 10
+            game_state.registrar_acerto(10)
         else:
             game_state.perder_vida()

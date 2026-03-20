@@ -5,18 +5,22 @@ from game.front_end.Componentes.Background import Background
 from game.front_end.TelasPrincipais.Jogo.Jogo_layout import JogoLayout
 from game.front_end.TelasPrincipais.Jogo.Jogo_controller import JogoController
 from game.front_end.Componentes.Text import draw_text_raster
-from game.front_end.Componentes.Coracoes import Coracoes
 from system.primitivas.Circulo import draw_circle_bresenham, draw_filled_circle_bresenham
 from system.preenchimento_e_textura.Preenchimento import boundary_fill, scanline_fill
-from game.scripts.rain import Rain
-
+from game.scripts.Rain import Rain
+from game.scripts.CheckCollisions import checar_colisao
+from game.front_end.Componentes.Coracoes import Coracoes
+from game.scripts.VIda import Vida
+from game.scripts.GameState import GameState
+from game.scripts.ObjetosdaChuva.Gota import Gota
 
 class Jogo:
 
-    def __init__(self, width, height):
+    def __init__(self, width, height, surface):
 
         self.width = width
         self.height = height
+        self.surface = surface
 
         self.resp = Responsive(width, height)
 
@@ -43,9 +47,44 @@ class Jogo:
             "assets/fonts/ThaleahFat.ttf",
             self.resp.font(68)
         )
+        self.coracoes = Coracoes(surface=self.surface, pos=(20, 20))
+        self.sistema_vida = Vida(coracoes=self.coracoes)
+        self.game_state = GameState(self.sistema_vida)
 
     def update(self, input_handler):
-        self.rain.update()
+        self.game_state.update()
+        self.rain.update(self.game_state)
+
+        mouse_x, mouse_y = pygame.mouse.get_pos()
+        balde_largura = 100
+        balde_altura = 50
+        balde_x = mouse_x - (balde_largura // 2)
+        balde_y = self.height - balde_altura - 10
+
+        for obj in list(self.rain.objects):
+            if isinstance(obj, Gota):
+                obj_x = obj.x - obj.largura
+                obj_y = obj.y - (obj.altura // 2)
+                obj_largura = obj.largura * 2
+                obj_altura = obj.altura
+            else:
+                obj_x = obj.x - obj.radius
+                obj_y = obj.y - obj.radius
+                obj_largura = obj.radius * 2
+                obj_altura = obj.radius * 2
+
+            bateu = checar_colisao(balde_x, balde_y, balde_largura, balde_altura, obj_x, obj_y, obj_largura, obj_altura)
+
+            if bateu:
+                obj.on_collect(self.game_state)
+
+                if obj in self.rain.objects:
+                    self.rain.objects.remove(obj)
+                
+                print(f"Placar: {self.game_state.score} | Combo: {self.game_state.multiplier}x | Vidas: {self.sistema_vida.lives}")
+        if self.sistema_vida.lives <= 0:
+            print("GAMER OVER!")
+            return True
         return self.controller.update(input_handler)
 
     def draw(self, surface):
@@ -66,12 +105,7 @@ class Jogo:
         heart_size = self.resp.s(26)  # baseado na escala
         heart_spacing = self.resp.s(35)
 
-        Coracoes(
-            surface,
-            pos=top_left,
-            spacing=heart_spacing,
-            size=heart_size
-        ).draw()
+        self.coracoes.draw()
 
         minimo = min(int(self.width), int(self.height))
         radius = minimo // 12
@@ -109,5 +143,8 @@ class Jogo:
             cy,
             (255, 255, 255)
         )
+
+        mouse_x, _ = pygame.mouse.get_pos()
+        pygame.draw.rect(surface, (0, 255, 0), (mouse_x - 50, self.height - 60, 100, 50), 2)
 
         del pixel_array

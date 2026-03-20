@@ -52,7 +52,7 @@ def main():
 
             if option == "JOGAR":
                 current_screen = "game"
-                game = Jogo(WIDTH, HEIGHT)
+                game = Jogo(WIDTH, HEIGHT, screen)
 
             elif option == "ESTATISTICA":
                 current_screen = "statistics"

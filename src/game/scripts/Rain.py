@@ -46,16 +46,19 @@ class Rain:
         ]
         self._remaining_colors = list(self._all_colors)
 
-    def update(self):
+    def update(self, game_state):
         """Atualiza posições, remove objetos fora da tela e gera novos spawns."""
+
         self._frame += 1
 
         # update objects
         for obj in list(self.objects):
             obj.update()
-
             # remover quando abaixo do limite inferior
             if obj.is_off_screen(self.height):
+                if isinstance(obj, Gota) and obj.color == game_state.current_color or game_state.star_power:
+                    game_state.perder_vida()
+
                 try:
                     self.objects.remove(obj)
                 except ValueError:
