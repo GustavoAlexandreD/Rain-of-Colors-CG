@@ -8,7 +8,7 @@ from game.front_end.Componentes.Text import draw_text_raster
 from game.front_end.Componentes.Coracoes import Coracoes
 from system.primitivas.Circulo import draw_circle_bresenham, draw_filled_circle_bresenham
 from system.preenchimento_e_textura.Preenchimento import boundary_fill, scanline_fill
-from game.scripts.rain import Rain
+from game.scripts.Rain import Rain
 
 
 class Jogo:
