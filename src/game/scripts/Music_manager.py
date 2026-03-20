@@ -10,7 +10,7 @@ def _resolve_audio_path(filename):
     """Helper: Resolve absolute path to audio file in assets/audio/"""
     # Get the project root (three levels up from this file: game/audio_manager.py -> game/ -> src/ -> root/)
     base_path = os.path.dirname(os.path.abspath(__file__))
-    audio_path = os.path.join(base_path, "..", "..", "assets", "audio", filename)
+    audio_path = os.path.join(base_path, "..", "..", "..", "assets", "audio", filename)
     return os.path.normpath(audio_path)
 
 
@@ -26,7 +26,7 @@ def play_soundtrack(volume=0.5):
         Plays at 1x speed (pygame doesn't support speed adjustment).
         To play at different speeds, pre-process the audio file externally.
     """
-    soundtrack_path = _resolve_audio_path("soundtrack.ogg")
+    soundtrack_path = _resolve_audio_path("LofiRain.ogg")
     
     # Stop any currently playing music
     pygame.mixer.music.stop()

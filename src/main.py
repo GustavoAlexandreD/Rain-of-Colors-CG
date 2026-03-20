@@ -1,5 +1,7 @@
 import pygame
 
+from game.scripts.Music_manager import play_soundtrack
+
 from game.scripts.Keyboard_Inputs import InputHandler
 from game.front_end.TelasPrincipais.Menu.Menu import Menu
 from game.front_end.TelasPrincipais.Jogo.Jogo import Jogo
@@ -8,6 +10,9 @@ from game.front_end.TelasPrincipais.Estatisticas.Estatisticas import Estatistica
 def main():
 
     pygame.init()
+
+    pygame.mixer.init()
+    play_soundtrack(volume=0.4)
 
     info = pygame.display.Info()
     WIDTH, HEIGHT = info.current_w, info.current_h

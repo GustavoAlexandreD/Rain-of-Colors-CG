@@ -1,3 +1,5 @@
+from game.scripts.Music_manager import play_audio
+
 class MenuController:
 
     def __init__(self, options):
@@ -15,13 +17,16 @@ class MenuController:
         # Navegação para cima
         if input_handler.menu_up:
             self.selected = (self.selected - 1) % len(self.options)
+            play_audio("AudioTrocaBotaoRainOfColors")
 
         # Navegação para baixo
         if input_handler.menu_down:
             self.selected = (self.selected + 1) % len(self.options)
+            play_audio("AudioTrocaBotaoRainOfColors")
 
         # Selecionar opção
         if input_handler.menu_select:
+            play_audio("AudioBotaoRainOfColors")
             return self.options[self.selected]
 
         return None
