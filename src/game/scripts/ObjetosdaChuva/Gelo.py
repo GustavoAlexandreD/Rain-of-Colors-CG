@@ -35,6 +35,11 @@ class Gelo(Objeto):
 
         try:
             scanline_fill_polygon(screen, poly, self.color)
+            from system.primitivas.Linha import line_bresenham
+            for i in range(len(poly)):
+                x0, y0 = poly[i]
+                x1, y1 = poly[(i + 1) % len(poly)]
+                line_bresenham(screen, x0, y0, x1, y1, (0,0,0))
         except Exception:
             from system.primitivas.Linha import line_bresenham
             for i in range(len(poly)):

@@ -6,7 +6,7 @@ from system.preenchimento_e_textura.Preenchimento import scanline_fill_polygon
 class Estrela(Objeto):
 
     def __init__(self, x, y):
-        super().__init__(x, y, (255, 215, 0), speed=1.5, radius=38)
+        super().__init__(x, y, (255, 215, 0), speed=1.5, radius=30)
 
     def draw(self, screen):
 
@@ -31,6 +31,12 @@ class Estrela(Objeto):
 
         try:
             scanline_fill_polygon(screen, points, self.color)
+            from system.primitivas.Linha import line_bresenham
+            n = len(points)
+            for i in range(n):
+                x0, y0 = points[i]
+                x1, y1 = points[(i + 1) % n]
+                line_bresenham(screen, x0, y0, x1, y1, (0,0,0))
         except Exception:
             from system.primitivas.Linha import line_bresenham
             n = len(points)

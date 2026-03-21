@@ -27,6 +27,7 @@ class Bomba(Objeto):
         poly = circle_poly(self.x, self.y, self.radius, steps=24)
         try:
             scanline_fill_polygon(screen, poly, self.color)
+            draw_circle_bresenham(screen, int(self.x), int(self.y), self.radius, (0,0,0))
         except Exception:
             draw_circle_bresenham(screen, int(self.x), int(self.y), self.radius, self.color)
 
