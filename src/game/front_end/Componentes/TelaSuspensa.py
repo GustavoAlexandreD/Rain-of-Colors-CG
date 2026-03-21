@@ -76,5 +76,4 @@ class TelaSuspensa:
     def fill(self, fill_color):
 
         cx, cy = self.get_center()
-        scanline_fill(self.surface, self.points, (0,0,0))
-        flood_fill(self.surface, cx, cy, fill_color)
+        scanline_fill(self.surface, self.points, fill_color)

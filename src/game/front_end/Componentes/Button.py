@@ -1,7 +1,7 @@
 from typing import Optional
 
 from system.primitivas.Linha import line_bresenham
-from system.preenchimento_e_textura.Preenchimento import scanline_fill
+from system.preenchimento_e_textura.Preenchimento import flood_fill, scanline_fill
 
 
 class Button:
@@ -73,4 +73,6 @@ class Button:
 
     def fill(self, fill_color):
 
-        scanline_fill(self.surface, self.points, fill_color)
+        cx,cy = self.get_center()
+        scanline_fill(self.surface, self.points, (0,0,0))
+        flood_fill(self.surface, cx, cy, fill_color)
