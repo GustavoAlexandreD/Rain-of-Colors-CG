@@ -5,6 +5,10 @@ class GameState:
         # 🎯 Score
         self.score = 0
 
+        # 🔥 MULTIPLICADOR (COMBO)
+        self.multiplier = 1
+        self.consecutive_catches = 0
+
         # ❤️ Sistema de vidas (injeção de dependência)
         self.vida = vida
 
@@ -54,13 +58,33 @@ class GameState:
                 self.freeze = False
 
     # =========================
+    # 🔥 SISTEMA DE PONTUAÇÃO E COMBO
+    # =========================
+    def registrar_acerto(self, pontos_base=10):
+        """Registra um acerto, aumenta o combo e soma os pontos multiplicados."""
+        self.consecutive_catches += 1
+
+        # A cada 3 gotas seguidas, o multiplicador aumenta em 1!
+        if self.consecutive_catches % 3 == 0:
+            self.multiplier += 1
+            print(f"COMBO UP! Multiplicador agora é {self.multiplier}x!")
+
+        # Soma os pontos com o multiplicador atual
+        self.score += (pontos_base * self.multiplier)
+
+    # =========================
     # ❤️ VIDA
     # =========================
     def perder_vida(self):
+        self.consecutive_catches = 0
+        self.multiplier = 1
+        print("Combo quebrado! Multiplicador voltou para 1x.")
         return self.vida.perder_vida()
 
     def reset(self):
         self.score = 0
+        self.score = 0
+        self.multiplier = 1
         self.current_color = (255, 0, 0)
 
         self.star_power = False

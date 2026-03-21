@@ -1,4 +1,5 @@
 import pygame
+import os
 
 from game.scripts.Music_manager import play_soundtrack
 
@@ -6,6 +7,29 @@ from game.scripts.Keyboard_Inputs import InputHandler
 from game.front_end.TelasPrincipais.Menu.Menu import Menu
 from game.front_end.TelasPrincipais.Jogo.Jogo import Jogo
 from game.front_end.TelasPrincipais.Estatisticas.Estatisticas import Estatisticas
+
+ARQUIVO_PONTUACOES = "recordes.txt"
+
+def carregar_pontuacoes():
+    """Lê o arquivo de recordes. Se não existir, cria uma lista zerada."""
+    if os.path.exists(ARQUIVO_PONTUACOES):
+        with open(ARQUIVO_PONTUACOES, "r") as f:
+            # Lê as linhas e tira os espaços/quebras de linha
+            linhas = [linha.strip() for linha in f.readlines() if linha.strip()]
+            
+            # Garante que sempre teremos 10 posições, mesmo se o arquivo estiver incompleto
+            while len(linhas) < 10:
+                linhas.append("000000")
+            return linhas[:10]
+    else:
+        # Se for a primeira vez rodando o jogo, retorna 10 zeros
+        return ["000000"] * 10
+
+def salvar_pontuacoes(pontuacoes):
+    """Escreve a lista atualizada no arquivo txt."""
+    with open(ARQUIVO_PONTUACOES, "w") as f:
+        for p in pontuacoes:
+            f.write(f"{p}\n")
 
 def main():
 
@@ -28,7 +52,7 @@ def main():
     # Telas
     # ==========================
 
-    pontuations = ["000000", "000000", "000000", "000000", "000000", "000000", "000000", "000000", "000000", "000000"]
+    pontuations = carregar_pontuacoes()
     menu = Menu(WIDTH, HEIGHT)
     game = None
     statistics = None
@@ -57,7 +81,7 @@ def main():
 
             if option == "JOGAR":
                 current_screen = "game"
-                game = Jogo(WIDTH, HEIGHT)
+                game = Jogo(WIDTH, HEIGHT, screen)
 
             elif option == "ESTATISTICA":
                 current_screen = "statistics"
@@ -69,6 +93,18 @@ def main():
         elif current_screen == "game":
 
             if game.update(input_handler):
+                pontuacao_final = game.game_state.score
+
+                pontos_ints = [int(p) for p in pontuations]
+                pontos_ints.append(pontuacao_final)
+
+                pontos_ints.sort(reverse=True)
+                pontos_ints = pontos_ints[:10]
+
+                pontuations = [f"{p:06d}" for p in pontos_ints]
+
+                salvar_pontuacoes(pontuations)
+                
                 current_screen = "menu"
                 game = None
 
