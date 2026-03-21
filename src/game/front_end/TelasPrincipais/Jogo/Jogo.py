@@ -15,6 +15,7 @@ from game.scripts.VIda import Vida
 from game.scripts.GameState import GameState
 from game.scripts.ObjetosdaChuva.Gota import Gota
 
+
 class Jogo:
 
     def __init__(self, width, height, surface):
@@ -84,9 +85,7 @@ class Jogo:
                 if obj in self.rain.objects:
                     self.rain.objects.remove(obj)
                 
-                print(f"Placar: {self.game_state.score} | Combo: {self.game_state.multiplier}x | Vidas: {self.sistema_vida.lives}")
         if self.sistema_vida.lives <= 0:
-            print("GAMER OVER!")
             return True
         return self.controller.update(input_handler)
 

@@ -3,6 +3,7 @@ import math
 import pygame
 from .Objeto import Objeto
 from system.primitivas.Circulo import draw_circle_bresenham
+from system.primitivas.Linha import line_bresenham
 from system.preenchimento_e_textura.Preenchimento import scanline_fill_polygon
 
 
@@ -69,6 +70,12 @@ class Gota(Objeto):
         poly = self.gota_poly_points()
         try:
             scanline_fill_polygon(screen, poly, self.color)
+            # Desenhar contorno preto
+            n = len(poly)
+            for i in range(n):
+                x0, y0 = poly[i]
+                x1, y1 = poly[(i + 1) % n]
+                line_bresenham(screen, x0, y0, x1, y1, (0, 0, 0))
         except Exception:
             # fallback simples
             draw_circle_bresenham(screen, int(self.x), int(self.y), self.radius, self.color)
