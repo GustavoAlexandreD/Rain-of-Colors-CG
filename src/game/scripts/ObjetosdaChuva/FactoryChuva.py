@@ -13,7 +13,7 @@ class FactoryChuva:
         rand = random.random()
 
         if rand < 0.84:
-            return Gota(x, y, 40, 20)
+            return Gota(x, y, 45, 30)
 
         elif rand < 0.88:
             return Estrela(x, y)

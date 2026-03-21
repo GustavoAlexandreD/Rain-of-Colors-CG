@@ -9,6 +9,7 @@ from game.front_end.Componentes.Coracoes import Coracoes
 from system.primitivas.Circulo import draw_circle_bresenham, draw_filled_circle_bresenham
 from system.preenchimento_e_textura.Preenchimento import boundary_fill, scanline_fill
 from game.scripts.Rain import Rain
+from src.game.scripts.player.Balde import Balde
 
 
 class Jogo:
@@ -72,6 +73,9 @@ class Jogo:
             spacing=heart_spacing,
             size=heart_size
         ).draw()
+
+        balde = Balde(100, self.height - self.height//8)
+        balde.draw(surface,(0,0,0),3)
 
         minimo = min(int(self.width), int(self.height))
         radius = minimo // 12

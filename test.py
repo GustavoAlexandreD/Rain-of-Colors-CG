@@ -20,11 +20,10 @@ while rodando:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             rodando = False
-    surface.fill((255,255,255))
+    surface.fill((0,0,0))
     #V Insira a função de teste aqui V
-    balde = Balde(100, 100, 200, 150, 100)
-    balde.fill(surface)
-    balde.draw(surface, (0,0,0), 3)
+    balde = Balde(100, 100)
+    balde.draw(surface)
 
     pygame.display.flip()
 pygame.quit()
