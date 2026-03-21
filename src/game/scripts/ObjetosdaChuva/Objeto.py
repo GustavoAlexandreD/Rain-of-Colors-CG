@@ -17,6 +17,12 @@ class Objeto(ABC):
         """
         self.y += self.speed
 
+    def get_position(self):
+        """
+        Retorna a posição do objeto para verificar se entrou no balde
+        """
+        return self.x, self.y
+
     @abstractmethod
     def draw(self, screen):
         pass

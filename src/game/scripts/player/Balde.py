@@ -1,5 +1,5 @@
-from system.primitivas.Linha import line_bresenham
-from game.scripts.player.Balde_controller import BaldeController
+from src.system.primitivas.Linha import line_bresenham
+from src.game.scripts.player.Balde_controller import BaldeController
 from system.preenchimento_e_textura.Preenchimento import scanline_fill
 
 class Balde():
@@ -11,6 +11,9 @@ class Balde():
         self.x_min = x_min
         self.x_max = x_max
         self.controller = BaldeController(self.points, self.x_min, self.x_max)
+
+    def get_dimensions(self):
+        return self.points[0][0], self.points[0][1], self.points[1][0], self.y + self.points[3][1]//2
 
     def _rebuild_points(self):
         center = self.x + self.top_width // 2
@@ -43,8 +46,6 @@ class Balde():
         Atualiza posição do objeto (movimento do balde)
         """
         self.points = self.controller.update(input_handler)
-
-        self.x = self.points[0][0]
 
     def draw(self, surface, boundary_color, boundary_thickness: int = 1):
         self.fill(surface)

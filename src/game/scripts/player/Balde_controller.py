@@ -2,11 +2,12 @@ from system.transformacoes_geometricas.Transformacoes_Geometricas import transla
 
 class BaldeController:
 
-    def __init__(self, vertices, x_min, x_max):
+    def __init__(self, vertices, x_min, x_max, speed = 5):
 
         self.vertices = vertices
         self.x_min = x_min
         self.x_max = x_max
+        self.speed = speed
 
 
     # ======================================================
@@ -18,12 +19,12 @@ class BaldeController:
         # Navegação para direita
         if input_handler.move_right:
             if self.vertices[1][0]<=self.x_max:
-                self.vertices = translacao(self.vertices, 4, 0)
+                self.vertices = translacao(self.vertices, self.speed, 0)
 
         # Navegação para esquerda
         if input_handler.move_left:
             if self.vertices[0][0]>=self.x_min:
-                self.vertices = translacao(self.vertices, -4, 0)
+                self.vertices = translacao(self.vertices, -self.speed, 0)
 
         return self.vertices
 

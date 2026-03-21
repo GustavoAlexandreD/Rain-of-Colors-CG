@@ -3,6 +3,7 @@ from time import perf_counter
 
 from .ObjetosdaChuva.FactoryChuva import FactoryChuva
 from .ObjetosdaChuva.Gota import Gota
+from .player import Balde
 
 
 class Rain:
@@ -46,9 +47,8 @@ class Rain:
         ]
         self._remaining_colors = list(self._all_colors)
 
-    def update(self, game_state):
+    def update(self, balde, game_state):
         """Atualiza posições, remove objetos fora da tela e gera novos spawns."""
-
         self._frame += 1
 
         # update objects
@@ -63,6 +63,11 @@ class Rain:
                     self.objects.remove(obj)
                 except ValueError:
                     pass
+            obj_x, obj_y = obj.get_position()
+            x0, y0, x, y = balde.get_dimensions()
+            if (x0 <= obj_x <= x) and (y0 <= obj_y <= y):
+                obj.on_collect(game_state)
+                self.objects.remove(obj)
 
         # spawn periodico (baseado em frames)
         if self._frame % self.spawn_interval == 0:
