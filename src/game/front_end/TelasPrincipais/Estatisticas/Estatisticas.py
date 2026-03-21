@@ -4,7 +4,7 @@ from game.front_end.Componentes.Background import Background
 from game.front_end.TelasPrincipais.Estatisticas.Estatisticas_layout import StatisticsLayout
 from game.front_end.TelasPrincipais.Estatisticas.Estatisticas_controller import StatisticsController
 from game.front_end.Componentes.Text import draw_text_centered, draw_text_raster
-from game.front_end.helper.responsive import Responsive
+from game.front_end.helper.Responsive import Responsive
 from game.front_end.Componentes.TelaSuspensa import TelaSuspensa
 from system.primitivas.Linha import line_bresenham
 

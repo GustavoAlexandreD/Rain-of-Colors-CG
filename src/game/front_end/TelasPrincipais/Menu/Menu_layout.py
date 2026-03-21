@@ -1,4 +1,4 @@
-from game.front_end.helper.responsive import Responsive
+from game.front_end.helper.Responsive import Responsive
 
 
 class MenuLayout:

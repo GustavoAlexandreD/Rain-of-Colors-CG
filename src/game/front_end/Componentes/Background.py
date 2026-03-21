@@ -1,5 +1,5 @@
 import pygame
-from src.system.preenchimento_e_textura.Texture_Mapping import scanline_texture_polygon
+from system.preenchimento_e_textura.Texture_Mapping import scanline_texture_polygon
 
 
 class Background:

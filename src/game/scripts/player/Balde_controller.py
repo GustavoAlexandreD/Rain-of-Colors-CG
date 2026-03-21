@@ -1,4 +1,4 @@
-from src.system.transformacoes_geometricas.Transformacoes_Geometricas import translacao
+from system.transformacoes_geometricas.Transformacoes_Geometricas import translacao
 
 class BaldeController:
 

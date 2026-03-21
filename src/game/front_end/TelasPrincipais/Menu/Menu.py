@@ -1,6 +1,6 @@
 import pygame
 
-from game.front_end.helper.responsive import Responsive
+from game.front_end.helper.Responsive import Responsive
 from game.front_end.TelasPrincipais.Menu.Menu_layout import MenuLayout
 from game.front_end.TelasPrincipais.Menu.Menu_controller import MenuController
 from system.primitivas.Linha import line_bresenham

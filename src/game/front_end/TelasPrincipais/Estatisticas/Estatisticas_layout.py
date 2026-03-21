@@ -1,5 +1,5 @@
 from game.front_end.Componentes.TelaSuspensa import TelaSuspensa
-from game.front_end.helper.responsive import Responsive
+from game.front_end.helper.Responsive import Responsive
 
 class StatisticsLayout:
 
