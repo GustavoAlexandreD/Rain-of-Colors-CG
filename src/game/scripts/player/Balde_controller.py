@@ -1,8 +1,12 @@
+from src.system.transformacoes_geometricas.Transformacoes_Geometricas import translacao
+
 class BaldeController:
 
-    def __init__(self):
+    def __init__(self, vertices, x_min, x_max):
 
-        self.selected = 0
+        self.vertices = vertices
+        self.x_min = x_min
+        self.x_max = x_max
 
 
     # ======================================================
@@ -13,13 +17,15 @@ class BaldeController:
 
         # Navegação para direita
         if input_handler.move_right:
-            self.selected = (self.selected - 1) % len(self.options)
+            if self.vertices[1][0]<=self.x_max:
+                self.vertices = translacao(self.vertices, 4, 0)
 
         # Navegação para esquerda
         if input_handler.move_left:
-            self.selected = (self.selected + 1) % len(self.options)
+            if self.vertices[0][0]>=self.x_min:
+                self.vertices = translacao(self.vertices, -4, 0)
 
-        return None
+        return self.vertices
 
 
     # ======================================================

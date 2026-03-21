@@ -4,21 +4,21 @@ from system.preenchimento_e_textura.Preenchimento import scanline_fill
 
 class Balde():
 
-    def __init__(self, x, y, height: int = 100, top_width: int = 70, base_width: int = 60):
+    def __init__(self, x, y, x_min, x_max, height: int = 100, top_width: int = 70, base_width: int = 60):
         self.x = x
         self.y = y
-        self.controller = BaldeController()
         self.set_size(height, top_width, base_width)
+        self.x_min = x_min
+        self.x_max = x_max
+        self.controller = BaldeController(self.points, self.x_min, self.x_max)
 
     def _rebuild_points(self):
         center = self.x + self.top_width // 2
 
         self.points = [
             (self.x, self.y + self.base_width // 3),
-            # (center, self.y),
             (self.x + self.top_width, self.y + self.base_width // 3),
             (center + self.base_width // 2, self.y + self.height - self.base_width // 4),
-            # (center, self.y + self.height),
             (center - self.base_width // 2, self.y + self.height - self.base_width // 4),
         ]
 
@@ -33,12 +33,17 @@ class Balde():
         self.y = y
         self._rebuild_points()
 
+    def set_area(self, x_min, x_max):
+        """Configura a área horizontal de spawn e opcionalmente a distância acima da tela."""
+        self.x_min = x_min
+        self.x_max = x_max
+
     def update(self, input_handler):
         """
-        Atualiza posição do objeto (movimento da chuva)
+        Atualiza posição do objeto (movimento do balde)
         """
-        return self.controller.update(input_handler)
-    
+        self.points = self.controller.update(input_handler)
+
     def draw(self, surface, boundary_color, boundary_thickness: int = 1):
         self.fill(surface)
 

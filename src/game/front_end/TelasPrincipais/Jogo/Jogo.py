@@ -34,11 +34,13 @@ class Jogo:
         # Chuva responsiva
         self.layout.set_rain_area_with_margins()
 
-        self.rain = Rain(width, height)
-
         x_min, x_max, spawn_above = self.layout.get_rain_area()
-        self.rain.set_area(x_min, x_max, spawn_above)
 
+        self.rain = Rain(width, height)
+        self.balde = Balde(abs(x_max-x_min//2), self.height - self.height//6, x_min, x_max)
+
+        self.rain.set_area(x_min, x_max, spawn_above)
+        self.balde.set_area(x_min, x_max)
         # Fonte responsiva
         self.font = pygame.font.Font(
             "assets/fonts/ThaleahFat.ttf",
@@ -47,6 +49,7 @@ class Jogo:
 
     def update(self, input_handler):
         self.rain.update()
+        self.balde.update(input_handler)
         return self.controller.update(input_handler)
 
     def draw(self, surface):
@@ -74,8 +77,7 @@ class Jogo:
             size=heart_size
         ).draw()
 
-        balde = Balde(100, self.height - self.height//8)
-        balde.draw(surface,(0,0,0),3)
+        self.balde.draw(surface,(0,0,0),3)
 
         minimo = min(int(self.width), int(self.height))
         radius = minimo // 12
