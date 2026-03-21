@@ -67,7 +67,6 @@ class GameState:
         # A cada 3 gotas seguidas, o multiplicador aumenta em 1!
         if self.consecutive_catches % 3 == 0:
             self.multiplier += 1
-            print(f"COMBO UP! Multiplicador agora é {self.multiplier}x!")
 
         # Soma os pontos com o multiplicador atual
         self.score += (pontos_base * self.multiplier)
@@ -78,7 +77,6 @@ class GameState:
     def perder_vida(self):
         self.consecutive_catches = 0
         self.multiplier = 1
-        print("Combo quebrado! Multiplicador voltou para 1x.")
         return self.vida.perder_vida()
 
     def reset(self):
