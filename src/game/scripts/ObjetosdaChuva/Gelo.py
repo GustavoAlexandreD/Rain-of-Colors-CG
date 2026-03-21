@@ -2,12 +2,21 @@ import pygame
 import math
 from .Objeto import Objeto
 from system.preenchimento_e_textura.Preenchimento import scanline_fill_polygon
+from system.transformacoes_geometricas.Transformacoes_Geometricas import rotacao
 
 
 class Gelo(Objeto):
 
     def __init__(self, x, y):
         super().__init__(x, y, (180, 220, 255), speed=2, radius=20)
+        self.rotation_angle = 0  # ângulo em graus
+
+    def update(self):
+        """
+        Atualiza posição do objeto (movimento da chuva) e rotação
+        """
+        self.y += self.speed
+        self.rotation_angle = (self.rotation_angle + 3) % 360
 
     def draw(self, screen):
 
@@ -31,7 +40,12 @@ class Gelo(Objeto):
 
             return [(int(x), int(y)) for x, y in pts]
 
+        # Gera pontos base do floco
         poly = snowflake_points(self.x, self.y, self.radius)
+        
+        # Aplica rotação ao redor do centro
+        poly = rotacao(poly, self.rotation_angle, pivot=(self.x, self.y))
+        poly = [(int(x), int(y)) for x, y in poly]
 
         try:
             scanline_fill_polygon(screen, poly, self.color)
