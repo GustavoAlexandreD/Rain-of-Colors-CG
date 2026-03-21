@@ -1,5 +1,5 @@
-from src.system.primitivas.Linha import line_bresenham
-from src.game.scripts.player.Balde_controller import BaldeController
+from system.primitivas.Linha import line_bresenham
+from game.scripts.player.Balde_controller import BaldeController
 from system.preenchimento_e_textura.Preenchimento import scanline_fill
 
 class Balde():
