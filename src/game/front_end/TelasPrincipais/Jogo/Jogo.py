@@ -1,5 +1,5 @@
 import pygame
-from src.game.front_end.helper.Responsive import Responsive
+from game.front_end.helper.Responsive import Responsive
 from game.front_end.Componentes.Background import Background
 from game.front_end.TelasPrincipais.Jogo.Jogo_layout import JogoLayout
 from game.front_end.TelasPrincipais.Jogo.Jogo_controller import JogoController
@@ -15,7 +15,7 @@ from game.scripts.GameState import GameState
 from game.scripts.ObjetosdaChuva.Gota import Gota
 from system.primitivas.Circulo import draw_filled_circle_bresenham
 from game.scripts.Rain import Rain
-from src.game.scripts.player.Balde import Balde
+from game.scripts.player.Balde import Balde
 
 
 class Jogo:
