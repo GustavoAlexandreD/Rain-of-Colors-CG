@@ -22,11 +22,11 @@ class StatisticsLayout:
         # Responsivo
         panel_w = self.resp.wp(0.80)
         panel_h = self.resp.hp(0.90)
-        start_y = self.resp.hp(0.05)
+        start_y = self.resp.hp(0.06)
 
         spacing = self.resp.hp(0.082)
 
-        self.panel = (self.width//2, start_y, panel_w, panel_h)
+        self.panel = (self.center_x, self.center_y, panel_w, panel_h)
         self.pontuations_positions = []
 
         ordem = 1

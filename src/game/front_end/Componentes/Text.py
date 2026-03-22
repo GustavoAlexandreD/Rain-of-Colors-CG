@@ -57,7 +57,7 @@ def draw_text_centered(pixel_array, font, text, object, color, orientation: Lite
         draw_text_raster(pixel_array, font, text, x, y, color)
     elif orientation == "top_center":
         x = center_x - text_w // 2
-        y = text_h
+        y = text_h + text_h // 4
 
         draw_text_raster(pixel_array, font, text, x, y, color)
          

@@ -8,7 +8,6 @@ from system.primitivas.Circulo import draw_circle_bresenham, draw_filled_circle_
 from system.preenchimento_e_textura.Preenchimento import boundary_fill, scanline_fill
 from game.scripts.Rain import Rain
 from game.scripts.player.Balde import Balde
-from game.scripts.CheckCollisions import checar_colisao
 from game.front_end.Componentes.Coracoes import Coracoes
 from game.scripts.Vida import Vida
 from game.scripts.GameState import GameState

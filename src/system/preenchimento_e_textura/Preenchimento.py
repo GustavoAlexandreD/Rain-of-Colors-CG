@@ -1,5 +1,5 @@
 from collections import deque
-from system.primitivas.SetPixel import set_pixel
+from src.system.primitivas.SetPixel import set_pixel
 
 
 # ============================================================

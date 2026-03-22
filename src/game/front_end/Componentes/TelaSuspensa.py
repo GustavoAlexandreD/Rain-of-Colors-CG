@@ -1,34 +1,36 @@
 import pygame
 
-from game.front_end.Componentes.Text import draw_text_centered
-from system.primitivas.Linha import line_bresenham
-from system.preenchimento_e_textura.Preenchimento import flood_fill, scanline_fill
+from src.game.front_end.Componentes.Text import draw_text_centered
+from src.system.primitivas.Linha import line_bresenham
+from src.system.preenchimento_e_textura.Preenchimento import flood_fill, scanline_fill
 
 
 class TelaSuspensa:
 
-    def __init__(self, surface, center_x, start_y, width, height):
+    def __init__(self, surface, center_x, center_y, width, height):
 
         self.surface = surface
 
-        self.x = center_x-(width//2)
         self.cx = int(center_x)
-        self.y = int(start_y)
-
+        self.cy = int(center_y)
         self.width = int(width)
         self.height = int(height)
-        margin_x = self.x//6
-        margin_y = self.y//4
 
+        # Octágono regular centralizado com aparência de bordas arredondadas
+        rx = self.width // 2
+        ry = self.height // 2
+        a = self.height // 12
+
+        # Pontos do octágono
         self.points = [
-            (self.x + margin_x//2, self.y),
-            (self.x + (self.width - margin_x), self.y),
-            (self.x + (self.width - margin_x//2), self.y + margin_y//2),
-            (self.x + (self.width - margin_x//2), self.y + (self.height - margin_y)),
-            (self.x + (self.width - margin_x), self.y + (self.height - margin_y//2)),
-            (self.x + 3, self.y + (self.height - margin_y//2)),
-            (self.x, self.y + (self.height - margin_y)),
-            (self.x, self.y + margin_y//2),
+            (self.cx - rx + a, self.cy - ry),  # Topo esquerdo
+            (self.cx + rx - a, self.cy - ry),  # Topo direito
+            (self.cx + rx, self.cy - ry + a),  # Direita superior
+            (self.cx + rx, self.cy + ry - a),  # Direita inferior
+            (self.cx + rx - a, self.cy + ry),  # Fundo direito
+            (self.cx - rx + a, self.cy + ry),  # Fundo esquerdo
+            (self.cx - rx, self.cy + ry - a),  # Esquerda inferior
+            (self.cx - rx, self.cy - ry + a),  # Esquerda superior
         ]
 
     # ------------------------------------------------------
@@ -36,11 +38,7 @@ class TelaSuspensa:
     # ------------------------------------------------------
 
     def get_center(self):
-
-        cx = self.x + self.width // 2
-        cy = self.y + self.height // 2
-
-        return cx, cy
+        return self.cx, self.cy
 
     # ------------------------------------------------------
     # Desenho da borda
@@ -52,22 +50,10 @@ class TelaSuspensa:
             boundary_thickness = 1
 
         for i in range(boundary_thickness):
-
-            line_bresenham(self.surface, self.points[0][0], self.points[0][1] - i, self.points[1][0], self.points[1][1] - i, boundary_color)
-
-            line_bresenham(self.surface, self.points[1][0], self.points[1][1] - i, self.points[2][0] + i, self.points[2][1], boundary_color)
-
-            line_bresenham(self.surface, self.points[2][0] + i, self.points[2][1], self.points[3][0] + i, self.points[3][1], boundary_color)
-
-            line_bresenham(self.surface, self.points[3][0] + i, self.points[3][1], self.points[4][0], self.points[4][1] + i, boundary_color)
-
-            line_bresenham(self.surface, self.points[4][0], self.points[4][1] + i, self.points[5][0], self.points[5][1] + i, boundary_color)
-
-            line_bresenham(self.surface, self.points[5][0], self.points[5][1] + i, self.points[6][0] - i, self.points[6][1], boundary_color)
-
-            line_bresenham(self.surface, self.points[6][0] - i, self.points[6][1], self.points[7][0] - i, self.points[7][1], boundary_color)
-
-            line_bresenham(self.surface, self.points[7][0] - i, self.points[7][1], self.points[0][0], self.points[0][1] + i, boundary_color)
+            for j in range(len(self.points)):
+                p1 = self.points[j]
+                p2 = self.points[(j + 1) % len(self.points)]
+                line_bresenham(self.surface, p1[0], p1[1] - i, p2[0], p2[1] - i, boundary_color)
 
     # ------------------------------------------------------
     # Preenchimento
@@ -75,5 +61,4 @@ class TelaSuspensa:
 
     def fill(self, fill_color):
 
-        cx, cy = self.get_center()
         scanline_fill(self.surface, self.points, fill_color)
