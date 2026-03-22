@@ -4,13 +4,17 @@ from system.preenchimento_e_textura.Preenchimento import scanline_fill
 
 class Balde():
 
-    def __init__(self, x, y, x_min, x_max, height: int = 100, top_width: int = 70, base_width: int = 60):
+    def __init__(self, game_state, x, y, x_min, x_max, height: int = 100, top_width: int = 70, base_width: int = 60):
         self.x = x
         self.y = y
         self.set_size(height, top_width, base_width)
         self.x_min = x_min
         self.x_max = x_max
-        self.controller = BaldeController(self.points, self.x_min, self.x_max)
+        self.game_state = game_state
+
+        self.boundary_color = (0,0,0)
+        self.fill_color = (139,69,19)
+        self.controller = BaldeController(self.points, self.x_min, self.x_max, game_state)
 
     def get_dimensions(self):
         return self.points[0][0], self.points[0][1], self.points[1][0], self.points[0][1] + self.height//2
@@ -47,20 +51,23 @@ class Balde():
         """
         self.points = self.controller.update(input_handler)
 
-    def draw(self, surface, boundary_color, boundary_thickness: int = 1):
+    def draw(self, surface, boundary_thickness: int = 1):
+        if not self.game_state.freeze and not self.game_state.star_power:
+            self.boundary_color = (0,0,0)
+            self.fill_color = (139,69,19)
         self.fill(surface)
 
         if boundary_thickness <= 0:
             boundary_thickness = 1
 
         for i in range(boundary_thickness):
-            line_bresenham(surface, self.points[0][0]-i, self.points[0][1]+i, self.points[1][0]+i, self.points[1][1]+i, boundary_color)
-            line_bresenham(surface, self.points[1][0]+i, self.points[1][1]+i, self.points[2][0]+i, self.points[2][1]-i, boundary_color)
-            line_bresenham(surface, self.points[2][0]+i, self.points[2][1]-i, self.points[3][0]-i, self.points[3][1]-i, boundary_color)
-            line_bresenham(surface, self.points[3][0]-i, self.points[3][1]-i, self.points[0][0]-i, self.points[0][1]+i, boundary_color)
+            line_bresenham(surface, self.points[0][0]-i, self.points[0][1]+i, self.points[1][0]+i, self.points[1][1]+i, self.boundary_color)
+            line_bresenham(surface, self.points[1][0]+i, self.points[1][1]+i, self.points[2][0]+i, self.points[2][1]-i, self.boundary_color)
+            line_bresenham(surface, self.points[2][0]+i, self.points[2][1]-i, self.points[3][0]-i, self.points[3][1]-i, self.boundary_color)
+            line_bresenham(surface, self.points[3][0]-i, self.points[3][1]-i, self.points[0][0]-i, self.points[0][1]+i, self.boundary_color)
 
     def fill(self, surface):
-        scanline_fill(surface, self.points, (139,69,19))
+        scanline_fill(surface, self.points, self.fill_color)
 
     def on_collect(self, game_state):
         """

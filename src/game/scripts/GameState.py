@@ -25,7 +25,7 @@ class GameState:
 
         # 🎨 Cor atual válida
         self.current_color = random.choice(self.COLORS)
-        self.current_color_duration = 500
+        self.current_color_duration = 1200
 
         # ⭐ STAR POWER
         self.star_power = False
@@ -51,15 +51,16 @@ class GameState:
         self.current_color_duration -=1
         if self.current_color_duration < 0:
             self.current_color = random.choice( self.COLORS)
-            self.current_color_duration = 500
+            self.current_color_duration = 800
 
 
     # =========================
     # ⭐ STAR POWER
     # =========================
     def activate_star(self, duration=300):
-        self.star_power = True
-        self.star_timer = duration
+        if not self.freeze:
+            self.star_power = True
+            self.star_timer = duration
 
     def _update_star_power(self):
         if self.star_power:
@@ -71,8 +72,9 @@ class GameState:
     # ❄️ FREEZE
     # =========================
     def activate_freeze(self, duration=180):
-        self.freeze = True
-        self.freeze_timer = duration
+        if not self.star_power:
+            self.freeze = True
+            self.freeze_timer = duration
 
     def _update_freeze(self):
         if self.freeze:

@@ -38,22 +38,6 @@ class Jogo:
         self.layout = JogoLayout(width, height)
         self.controller = JogoController()
 
-        # Chuva responsiva
-        self.layout.set_rain_area_with_margins()
-
-        x_min, x_max, spawn_above = self.layout.get_rain_area()
-
-        self.rain = Rain(width, height)
-        self.balde = Balde(abs(x_max-x_min//2), self.height - self.height//6, x_min, x_max)
-
-        self.rain.set_area(x_min, x_max, spawn_above)
-        self.balde.set_area(x_min, x_max)
-        # Fonte responsiva
-        self.font = pygame.font.Font(
-            "assets/fonts/ThaleahFat.ttf",
-            self.resp.font(68)
-        )
-
         # UI
         base_x, base_y = self.layout.get_top_left()
 
@@ -69,6 +53,22 @@ class Jogo:
         self.coracoes = Coracoes(surface, pos=top_left, spacing=heart_spacing, size=heart_size)
         self.sistema_vida = Vida(coracoes=self.coracoes)
         self.game_state = GameState(self.sistema_vida)
+
+        # Chuva responsiva
+        self.layout.set_rain_area_with_margins()
+
+        x_min, x_max, spawn_above = self.layout.get_rain_area()
+
+        self.rain = Rain(width, height)
+        self.balde = Balde(self.game_state, abs(x_max-x_min//2), self.height - self.height//6, x_min, x_max)
+
+        self.rain.set_area(x_min, x_max, spawn_above)
+        self.balde.set_area(x_min, x_max)
+        # Fonte responsiva
+        self.font = pygame.font.Font(
+            "assets/fonts/ThaleahFat.ttf",
+            self.resp.font(68)
+        )
 
     def update(self, input_handler):
         self.game_state.update()
@@ -86,7 +86,7 @@ class Jogo:
 
         self.coracoes.draw()
 
-        self.balde.draw(surface,(0,0,0),3)
+        self.balde.draw(surface, 3)
 
         minimo = min(int(self.width), int(self.height))
         radius = minimo // 12
@@ -134,7 +134,33 @@ class Jogo:
                 texto_combo,
                 self.resp.wp(0.7),  # Mesmo X do Score
                 self.resp.hp(0.12), # Um pouco abaixo do Score
-                (255, 215, 0),      # Dourado para destacar
+                (255, 40, 0),      
+                "center"
+            )
+
+        if self.game_state.freeze:
+            texto_freeze = "FROZEN STATE!"
+            y_position = self.resp.hp(0.20) if self.game_state.multiplier > 1 else self.resp.hp(0.12)
+            draw_text_raster(
+                pixel_array,
+                self.font,
+                texto_freeze,
+                self.resp.wp(0.7),  
+                y_position, 
+                (230, 234, 225),      
+                "center"
+            )
+
+        if self.game_state.star_power:
+            texto_star = "STAR POWER!"
+            y_position = self.resp.hp(0.20) if self.game_state.multiplier > 1 else self.resp.hp(0.12)
+            draw_text_raster(
+                pixel_array,
+                self.font,
+                texto_star,
+                self.resp.wp(0.7),  
+                y_position, 
+                (255, 223, 0),      
                 "center"
             )
 

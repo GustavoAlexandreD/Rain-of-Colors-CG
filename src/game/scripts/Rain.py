@@ -1,6 +1,8 @@
 import random
 from time import perf_counter
 
+from game.scripts.ObjetosdaChuva.Estrela import Estrela
+from game.scripts.ObjetosdaChuva.Gelo import Gelo
 from .ObjetosdaChuva.FactoryChuva import FactoryChuva
 from .ObjetosdaChuva.Gota import Gota
 from .player import Balde
@@ -65,9 +67,15 @@ class Rain:
                     pass
             obj_x, obj_y = obj.get_position()
             x0, y0, x, y = balde.get_dimensions()
-            if (x0 <= obj_x <= x) and (y0 <= obj_y <= y):
+            if (x0 <= obj_x <= x) and (y0 <= obj_y <= y) and not game_state.freeze:
                 obj.on_collect(game_state)
                 self.objects.remove(obj)
+                if game_state.freeze:
+                    balde.boundary_color = (30, 40, 60)
+                    balde.fill_color = (120, 140, 150)
+                elif game_state.star_power:
+                    balde.boundary_color = (90, 60, 10)
+                    balde.fill_color = (212, 175, 55)
 
         # spawn periodico (baseado em frames)
         if self._frame % self.spawn_interval == 0:
