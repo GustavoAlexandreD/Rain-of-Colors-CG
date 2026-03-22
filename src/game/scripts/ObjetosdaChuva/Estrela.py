@@ -1,12 +1,13 @@
 import pygame
 from .Objeto import Objeto
 from system.preenchimento_e_textura.Preenchimento import scanline_fill_polygon
-
+from system.transformacoes_geometricas.Transformacoes_Geometricas import escala
 
 class Estrela(Objeto):
 
     def __init__(self, x, y):
         super().__init__(x, y, (255, 215, 0), speed=1.5, radius=30)
+        self.twinkle_phase = True
 
     def draw(self, screen):
 
@@ -25,6 +26,13 @@ class Estrela(Objeto):
             (self.x - 10 * scale, self.y),
             (self.x - 4 * scale, self.y - 3 * scale)
         ]
+
+        if self.twinkle_phase:
+            points = escala(points, 1.1, 1.1, (self.x, self.y))
+            self.twinkle_phase = False
+        else:
+            points = escala(points, 0.9, 0.9, (self.x,self.y))
+            self.twinkle_phase = True
 
         # converter para int só no final (melhor prática)
         points = [(int(px), int(py)) for px, py in points]
