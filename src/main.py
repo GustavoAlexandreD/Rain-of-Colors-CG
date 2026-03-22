@@ -86,6 +86,20 @@ def main():
                 
                 current_screen = "menu"
                 game = None
+    
+            if game is not None:
+                if game.controller.pause:
+                    option = game.pause.update(input_handler)
+
+                    if option == "CONTINUAR":
+                        game.controller.pause = False
+                    elif option == "RECOMECAR":
+                        game.game_state.reset = True
+                        game.controller.pause = False
+                        game = None
+                        game = Jogo(WIDTH, HEIGHT, screen)
+                    elif option == "VOLTAR P/ MENU":
+                        game.controller.exit_game = True
 
         elif current_screen == "statistics":
 

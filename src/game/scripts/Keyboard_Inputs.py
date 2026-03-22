@@ -45,6 +45,7 @@ class InputHandler:
         self.menu_select = False
         self.mouse_click = False
         self.menu_back = False
+        self.pause = False
 
         for event in pygame.event.get():
 
@@ -84,6 +85,9 @@ class InputHandler:
 
                 if event.key == pygame.K_ESCAPE:
                     self.menu_back = True
+                
+                if event.key == pygame.K_p:
+                    self.pause = True
 
             # ---------------------------------
             # TECLADO (soltou tecla)
