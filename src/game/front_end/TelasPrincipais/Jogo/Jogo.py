@@ -1,5 +1,6 @@
 import pygame
 from game.front_end.TelasPrincipais.Pause.Pause import Pause
+from game.front_end.TelasPrincipais.GameOver.GameOver import GameOver
 from game.front_end.helper.Responsive import Responsive
 from game.front_end.Componentes.Background import Background
 from game.front_end.TelasPrincipais.Jogo.Jogo_layout import JogoLayout
@@ -72,16 +73,15 @@ class Jogo:
             self.resp.font(68)
         )
 
-        #Inicialização da janela de pause
+        #Inicialização da janela de pause e game_over
         self.pause = Pause(surface, width, height)
+        self.game_over = GameOver(surface, width, height)
 
     def update(self, input_handler):
-        if not self.controller.pause:
+        if not self.controller.pause and self.sistema_vida.lives>0:
             self.game_state.update()
             self.rain.update(self.balde, self.game_state)
             self.balde.update(input_handler)
-            if self.sistema_vida.lives <= 0:
-                return True
         return self.controller.update(input_handler)
 
     def draw(self, surface):
@@ -172,5 +172,8 @@ class Jogo:
 
         if self.controller.pause:
             self.pause.draw()
+        
+        if self.sistema_vida.lives <= 0:
+            self.game_over.draw()
 
         del pixel_array

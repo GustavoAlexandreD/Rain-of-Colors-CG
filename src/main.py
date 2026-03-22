@@ -100,6 +100,16 @@ def main():
                         game = Jogo(WIDTH, HEIGHT, screen)
                     elif option == "VOLTAR P/ MENU":
                         game.controller.exit_game = True
+                if game.sistema_vida.lives <= 0:
+                    option = game.game_over.update(input_handler)
+
+                    if option == "RECOMECAR":
+                        game.game_state.reset = True
+                        game.controller.pause = False
+                        game = None
+                        game = Jogo(WIDTH, HEIGHT, screen)
+                    elif option == "VOLTAR P/ MENU":
+                        game.controller.exit_game = True
 
         elif current_screen == "statistics":
 
