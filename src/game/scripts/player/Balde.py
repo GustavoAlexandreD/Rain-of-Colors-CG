@@ -13,7 +13,7 @@ class Balde():
         self.controller = BaldeController(self.points, self.x_min, self.x_max)
 
     def get_dimensions(self):
-        return self.points[0][0], self.points[0][1], self.points[1][0], self.y + self.points[3][1]//2
+        return self.points[0][0], self.points[0][1], self.points[1][0], self.points[0][1] + self.height//2
 
     def _rebuild_points(self):
         center = self.x + self.top_width // 2

@@ -53,7 +53,20 @@ class Jogo:
             "assets/fonts/ThaleahFat.ttf",
             self.resp.font(68)
         )
-        self.coracoes = Coracoes(surface, pos=(20, 20))
+
+        # UI
+        base_x, base_y = self.layout.get_top_left()
+
+        # pequeno ajuste fino (responsivo)
+        offset_x = self.resp.s(10)
+        offset_y = self.resp.s(10)
+
+        top_left = (base_x + offset_x, base_y + offset_y)
+
+        heart_size = self.resp.s(26)  # baseado na escala
+        heart_spacing = self.resp.s(35)
+
+        self.coracoes = Coracoes(surface, pos=top_left, spacing=heart_spacing, size=heart_size)
         self.sistema_vida = Vida(coracoes=self.coracoes)
         self.game_state = GameState(self.sistema_vida)
 
@@ -70,18 +83,6 @@ class Jogo:
         self.background.draw(surface)
 
         self.rain.draw(surface)
-
-        # UI
-        base_x, base_y = self.layout.get_top_left()
-
-        # pequeno ajuste fino (responsivo)
-        offset_x = self.resp.s(10)
-        offset_y = self.resp.s(10)
-
-        top_left = (base_x + offset_x, base_y + offset_y)
-
-        heart_size = self.resp.s(26)  # baseado na escala
-        heart_spacing = self.resp.s(35)
 
         self.coracoes.draw()
 
