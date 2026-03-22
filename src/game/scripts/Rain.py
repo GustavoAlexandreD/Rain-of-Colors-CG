@@ -56,7 +56,7 @@ class Rain:
             obj.update()
             # remover quando abaixo do limite inferior
             if obj.is_off_screen(self.height):
-                if isinstance(obj, Gota) and obj.color == game_state.current_color or game_state.star_power:
+                if isinstance(obj, Gota) and obj.color == game_state.current_color and not game_state.star_power:
                     game_state.perder_vida()
 
                 try:

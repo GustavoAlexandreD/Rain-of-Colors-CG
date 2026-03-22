@@ -114,17 +114,6 @@ class Jogo:
             "center"
         )
 
-        cx, cy = self.layout.get_center()
-
-        draw_text_raster(
-            pixel_array,
-            self.font,
-            "GAME RUNNING",
-            cx - self.resp.wp(0.1),
-            cy,
-            (255, 255, 255)
-        )
-
         texto_score = f"SCORE: {self.game_state.score:06d}"
         draw_text_raster(
             pixel_array,

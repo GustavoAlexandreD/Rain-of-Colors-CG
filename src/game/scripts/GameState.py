@@ -1,4 +1,15 @@
+import random
+
+
 class GameState:
+
+    COLORS = [
+        (255, 0, 0),
+        (0, 0, 255),
+        (0, 255, 0),
+        (255, 255, 0),
+        (255, 0, 255)
+    ]
 
     def __init__(self, vida):
 
@@ -13,7 +24,8 @@ class GameState:
         self.vida = vida
 
         # 🎨 Cor atual válida
-        self.current_color = (255, 0, 0)
+        self.current_color = random.choice(self.COLORS)
+        self.current_color_duration = 500
 
         # ⭐ STAR POWER
         self.star_power = False
@@ -30,6 +42,17 @@ class GameState:
 
         self._update_star_power()
         self._update_freeze()
+        self._update_color()
+
+    # =========================
+    # 🎨 Color
+    # =========================
+    def _update_color(self):
+        self.current_color_duration -=1
+        if self.current_color_duration < 0:
+            self.current_color = random.choice( self.COLORS)
+            self.current_color_duration = 500
+
 
     # =========================
     # ⭐ STAR POWER
