@@ -1,6 +1,7 @@
 import pygame
 import os
 
+from game.front_end.TelasPrincipais.Tutorial.Tutorial import Tutorial
 from game.scripts.Pontuacao import carregar_pontuacoes,salvar_pontuacoes
 from game.scripts.Music_manager import play_soundtrack
 
@@ -62,6 +63,10 @@ def main():
                 current_screen = "game"
                 game = Jogo(WIDTH, HEIGHT, screen)
 
+            elif option == "TUTORIAL":
+                current_screen = "tutorial"
+                tutorial = Tutorial(WIDTH, HEIGHT, pontuations)
+
             elif option == "ESTATISTICA":
                 current_screen = "statistics"
                 statistics = Estatisticas(WIDTH, HEIGHT, pontuations)
@@ -111,6 +116,12 @@ def main():
                     elif option == "VOLTAR P/ MENU":
                         game.controller.exit_game = True
 
+        elif current_screen == "tutorial":
+
+            if tutorial.update(input_handler):
+                current_screen = "menu"
+                tutorial = None
+
         elif current_screen == "statistics":
 
             if statistics.update(input_handler):
@@ -128,6 +139,9 @@ def main():
 
         elif current_screen == "game" and game is not None:
             game.draw(screen)
+
+        elif current_screen == "tutorial" and tutorial is not None:
+            tutorial.draw(screen)
 
         elif current_screen == "statistics" and statistics is not None:
             statistics.draw(screen)

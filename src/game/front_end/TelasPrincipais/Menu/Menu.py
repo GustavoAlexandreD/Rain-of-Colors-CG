@@ -18,7 +18,7 @@ class Menu:
 
         self.resp = Responsive(width, height)
 
-        self.options = ["JOGAR", "ESTATISTICA", "SAIR"]
+        self.options = ["JOGAR", "TUTORIAL", "ESTATISTICA", "SAIR"]
 
         # Background
         self.background = Background(

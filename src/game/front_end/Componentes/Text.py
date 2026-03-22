@@ -37,6 +37,47 @@ def draw_text_raster(pixel_array, font, text, x, y, color, orientation: Literal[
                     if 0 <= draw_x < screen_w and 0 <= draw_y < screen_h:
                         pixel_array[draw_x, draw_y] = curr_color
 
+
+def draw_text_raster_wrapped(pixel_array, font, text, x, y, color, max_width, orientation: Literal["center"] | None = None, line_spacing: int = 2):
+    """Renderiza texto com quebra de linha quando excede max_width."""
+
+    if max_width <= 0:
+        draw_text_raster(pixel_array, font, text, x, y, color, orientation)
+        return
+
+    words = text.split(' ')
+    lines = []
+    current = ''
+
+    for word in words:
+        if current == '':
+            new_line = word
+        else:
+            new_line = f"{current} {word}"
+
+        line_width, _ = font.size(new_line)
+        if line_width <= max_width:
+            current = new_line
+        else:
+            if current:
+                lines.append(current)
+            current = word
+
+    if current:
+        lines.append(current)
+
+    line_height = font.get_linesize() + line_spacing
+
+    for i, line in enumerate(lines):
+        line_surface = font.render(line, True, color)
+        line_width = line_surface.get_width()
+        line_x = x
+
+        if orientation == 'center':
+            line_x = x - line_width // 2
+
+        draw_text_raster(pixel_array, font, line, line_x, y + i * line_height, color)
+
 # ------------------------------------------------------
 # Texto centralizado dentro de um objeto
 # ------------------------------------------------------
