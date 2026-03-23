@@ -1,4 +1,5 @@
 import random
+import math
 
 from game.scripts.ObjetosdaChuva.Estrela import Estrela
 from game.scripts.ObjetosdaChuva.Gelo import Gelo
@@ -39,7 +40,11 @@ class Rain:
         # controle de distribuição de cores das gotas
         self.gotas_cycle_count = 0
 
-        # cores a garantir por ciclo (ordem fixa)
+        # 🔥 NOVO: controle de espaçamento entre objetos
+        self.min_spawn_distance = 60
+        self.max_spawn_attempts = 10
+
+        # cores a garantir por ciclo (usar nomes conforme Gota.COLORS ordem)
         self._all_colors = [
             (255, 0, 0),    # vermelho
             (0, 0, 255),    # azul
@@ -53,20 +58,15 @@ class Rain:
         """Atualiza posições, remove objetos fora da tela e gera novos spawns."""
         self._frame += 1
 
-        # 🔥 velocidade global baseada no score (dificuldade progressiva)
+        # velocidade global baseada no score
         current_speed = game_state.get_current_speed()
 
         # update objects
         for obj in list(self.objects):
 
-            # ❄️ FREEZE: objetos param completamente
+            # aplicar velocidade dinâmica (se não estiver congelado)
             if not game_state.freeze:
-
-                # 🔥 fator de dificuldade relativo à velocidade base do jogo
                 difficulty_factor = current_speed / game_state.base_speed
-
-                # 🔥 aplica velocidade proporcional mantendo identidade do objeto
-                # (ex: estrela continua mais lenta que gota)
                 obj.speed = obj.base_speed * difficulty_factor
 
             obj.update()
@@ -81,7 +81,7 @@ class Rain:
                 except ValueError:
                     pass
 
-            # checar colisão com o balde
+            # detecção de colisão com o balde
             obj_x, obj_y = obj.get_position()
             x0, y0, x, y = balde.get_dimensions()
 
@@ -89,50 +89,69 @@ class Rain:
                 obj.on_collect(game_state)
                 self.objects.remove(obj)
 
-                # efeitos visuais no balde
                 if game_state.freeze:
                     balde.boundary_color = (30, 40, 60)
                     balde.fill_color = (120, 140, 150)
-
                 elif game_state.star_power:
                     balde.boundary_color = (90, 60, 10)
                     balde.fill_color = (212, 175, 55)
 
-        # spawn periódico (baseado em frames)
+        # spawn periodico (baseado em frames)
         if self._frame % self.spawn_interval == 0:
             self._spawn_one()
 
+    # =========================
+    # 🔥 CONTROLE DE ESPAÇAMENTO
+    # =========================
+    def _is_position_valid(self, x, y):
+        """Verifica se a posição está longe o suficiente de outros objetos."""
+        for obj in self.objects:
+            ox, oy = obj.get_position()
+            dist = math.hypot(x - ox, y - oy)
+
+            if dist < self.min_spawn_distance:
+                return False
+
+        return True
+
     def _spawn_one(self):
-        # posição aleatória horizontal
-        x = random.uniform(self.x_min, self.x_max)
+        x = None
+        y = None
 
-        # spawn acima da tela (negativo) para cair naturalmente
-        y = random.uniform(-self.spawn_above, -10)
+        # tenta encontrar uma posição válida
+        for _ in range(self.max_spawn_attempts):
 
-        obj = FactoryChuva.create_objeto(x, y)
+            x = random.uniform(self.x_min, self.x_max)
+            y = random.uniform(-self.spawn_above, -10)
 
-        # se for Gota, garantir distribuição de cores por ciclo de 10
-        if isinstance(obj, Gota):
+            if not self._is_position_valid(x, y):
+                continue
 
-            # ainda há cores obrigatórias no ciclo
-            if self._remaining_colors:
-                chosen = self._remaining_colors.pop(0)
-                obj.color = chosen
-            else:
-                # fallback aleatório após garantir todas
-                obj.color = random.choice(Gota.COLORS)
+            obj = FactoryChuva.create_objeto(x, y)
 
-            self.gotas_cycle_count += 1
+            # se for Gota, garantir distribuição de cores por ciclo de 10 gotas
+            if isinstance(obj, Gota):
 
-            # reset ciclo a cada 10 gotas
-            if self.gotas_cycle_count >= 10:
-                self.gotas_cycle_count = 0
-                self._remaining_colors = list(self._all_colors)
+                if self._remaining_colors:
+                    chosen = self._remaining_colors.pop(0)
+                    obj.color = chosen
+                else:
+                    obj.color = random.choice(Gota.COLORS)
 
-        self.objects.append(obj)
+                self.gotas_cycle_count += 1
+
+                # quando completar 10 gotas, reiniciar ciclo
+                if self.gotas_cycle_count >= 10:
+                    self.gotas_cycle_count = 0
+                    self._remaining_colors = list(self._all_colors)
+
+            self.objects.append(obj)
+            return  # spawn bem sucedido
+
+        # se não conseguiu posição válida, não spawna (evita sobreposição)
 
     def set_area(self, x_min, x_max, spawn_above=None):
-        """Configura a área horizontal de spawn e opcionalmente a altura de spawn."""
+        """Configura a área horizontal de spawn e opcionalmente a distância acima da tela."""
         self.x_min = x_min
         self.x_max = x_max
         if spawn_above is not None:
