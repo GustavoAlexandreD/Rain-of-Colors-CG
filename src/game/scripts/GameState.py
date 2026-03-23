@@ -38,12 +38,24 @@ class GameState:
         self.freeze = False
         self.freeze_timer = 0
 
+        # 🚀 DIFICULDADE (velocidade)
+        self.base_speed = 3.0
+        self.max_speed = 10.0
+        self.speed_increment = 0.1
+
     # =========================
     # 🎮 UPDATE GLOBAL
     # =========================
     def update(self):
         self._update_star_power()
         self._update_freeze()
+
+    # =========================
+    # 🚀 VELOCIDADE PROGRESSIVA
+    # =========================
+    def get_current_speed(self):
+        speed = self.base_speed + (self.score * self.speed_increment / 20)
+        return min(speed, self.max_speed)
 
     # =========================
     # 🎨 TROCA DE COR

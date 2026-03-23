@@ -52,9 +52,25 @@ class Balde():
         self.points = self.controller.update(input_handler)
 
     def draw(self, surface, boundary_thickness: int = 1):
+
+        # 🔥 RESET padrão se nenhum efeito
         if not self.game_state.freeze and not self.game_state.star_power:
             self.boundary_color = (0,0,0)
             self.fill_color = (139,69,19)
+
+        # ⭐ PISCAR QUANDO STAR POWER ESTÁ ACABANDO
+        if self.game_state.star_power and self.game_state.star_timer < 60:
+
+            # alterna a cada frame (efeito piscando)
+            if self.game_state.star_timer % 10 < 5:
+                # cor da estrela
+                self.boundary_color = (90, 60, 10)
+                self.fill_color = (212, 175, 55)
+            else:
+                # cor normal
+                self.boundary_color = (0,0,0)
+                self.fill_color = (139,69,19)
+
         self.fill(surface)
 
         if boundary_thickness <= 0:

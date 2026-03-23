@@ -7,6 +7,7 @@ class Objeto(ABC):
         self.x = x
         self.y = y
         self.color = color
+        self.base_speed = speed
         self.speed = speed
         self.radius = radius
         self.active = True

@@ -17,7 +17,7 @@ class Gota(Objeto):
         (255, 0, 255)
     ]
 
-    def __init__(self, x, y, altura, largura, speed=2):
+    def __init__(self, x, y, altura, largura, speed=3.5):
         color = random.choice(self.COLORS)
         super().__init__(x, y, color, speed, radius=18)
         self.altura = altura
