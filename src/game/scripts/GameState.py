@@ -20,18 +20,21 @@ class GameState:
         self.multiplier = 1
         self.consecutive_catches = 0
 
-        # ❤️ Sistema de vidas (injeção de dependência)
+        # 🎨 CONTROLE DE TROCA DE COR
+        self.catches_for_color_change = 0
+        self.catches_to_change_color = 4
+
+        # ❤️ Sistema de vidas
         self.vida = vida
 
         # 🎨 Cor atual válida
         self.current_color = random.choice(self.COLORS)
-        self.current_color_duration = 1200
 
         # ⭐ STAR POWER
         self.star_power = False
         self.star_timer = 0
 
-        # ❄️ FREEZE (gelo)
+        # ❄️ FREEZE
         self.freeze = False
         self.freeze_timer = 0
 
@@ -39,20 +42,20 @@ class GameState:
     # 🎮 UPDATE GLOBAL
     # =========================
     def update(self):
-
         self._update_star_power()
         self._update_freeze()
-        self._update_color()
 
     # =========================
-    # 🎨 Color
+    # 🎨 TROCA DE COR
     # =========================
-    def _update_color(self):
-        self.current_color_duration -=1
-        if self.current_color_duration < 0:
-            self.current_color = random.choice( self.COLORS)
-            self.current_color_duration = 800
+    def _change_color(self):
+        nova_cor = random.choice(self.COLORS)
 
+        # Evita repetir a mesma cor
+        while nova_cor == self.current_color:
+            nova_cor = random.choice(self.COLORS)
+
+        self.current_color = nova_cor
 
     # =========================
     # ⭐ STAR POWER
@@ -83,18 +86,25 @@ class GameState:
                 self.freeze = False
 
     # =========================
-    # 🔥 SISTEMA DE PONTUAÇÃO E COMBO
+    # 🔥 PONTUAÇÃO + COMBO + TROCA DE COR
     # =========================
     def registrar_acerto(self, pontos_base=10):
-        """Registra um acerto, aumenta o combo e soma os pontos multiplicados."""
-        self.consecutive_catches += 1
+        """Registra acerto, aplica combo, pontua e controla troca de cor."""
 
-        # A cada 3 gotas seguidas, o multiplicador aumenta em 1!
+        # Combo
+        self.consecutive_catches += 1
+        self.catches_for_color_change += 1
+
         if self.consecutive_catches % 3 == 0:
             self.multiplier += 1
 
-        # Soma os pontos com o multiplicador atual
+        # Pontuação
         self.score += (pontos_base * self.multiplier)
+
+        # 🔄 Troca de cor a cada N acertos
+        if self.catches_for_color_change >= self.catches_to_change_color:
+            self._change_color()
+            self.catches_for_color_change = 0
 
     # =========================
     # ❤️ VIDA
@@ -102,13 +112,20 @@ class GameState:
     def perder_vida(self):
         self.consecutive_catches = 0
         self.multiplier = 1
+        self.catches_for_color_change = 0
         return self.vida.perder_vida()
 
+    # =========================
+    # 🔄 RESET
+    # =========================
     def reset(self):
         self.score = 0
-        self.score = 0
         self.multiplier = 1
-        self.current_color = (255, 0, 0)
+        self.consecutive_catches = 0
+
+        self.catches_for_color_change = 0
+
+        self.current_color = random.choice(self.COLORS)
 
         self.star_power = False
         self.star_timer = 0
