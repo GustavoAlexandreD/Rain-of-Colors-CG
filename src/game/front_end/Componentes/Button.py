@@ -1,7 +1,7 @@
 from typing import Optional
 
-from src.system.primitivas.Linha import line_bresenham
-from src.system.preenchimento_e_textura.Preenchimento import flood_fill, scanline_fill
+from system.primitivas.Linha import line_bresenham
+from system.preenchimento_e_textura.Preenchimento import flood_fill, scanline_fill
 
 
 class Button:

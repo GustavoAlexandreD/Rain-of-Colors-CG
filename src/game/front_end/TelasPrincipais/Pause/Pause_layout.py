@@ -1,4 +1,4 @@
-from src.game.front_end.helper.Responsive import Responsive
+from game.front_end.helper.Responsive import Responsive
 
 class PauseLayout:
 

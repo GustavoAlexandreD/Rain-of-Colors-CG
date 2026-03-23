@@ -1,11 +1,11 @@
 import pygame
-from src.game.front_end.Componentes.Button import Button
-from src.game.front_end.TelasPrincipais.GameOver.GameOver_layout import GameOverLayout
-from src.game.front_end.TelasPrincipais.GameOver.GameOver_controller import GameOverController
-from src.game.front_end.Componentes.Text import draw_text_centered, draw_text_raster
-from src.game.front_end.helper.Responsive import Responsive
-from src.game.front_end.Componentes.TelaSuspensa import TelaSuspensa
-from src.system.primitivas.Linha import line_bresenham
+from game.front_end.Componentes.Button import Button
+from game.front_end.TelasPrincipais.GameOver.GameOver_layout import GameOverLayout
+from game.front_end.TelasPrincipais.GameOver.GameOver_controller import GameOverController
+from game.front_end.Componentes.Text import draw_text_centered, draw_text_raster
+from game.front_end.helper.Responsive import Responsive
+from game.front_end.Componentes.TelaSuspensa import TelaSuspensa
+from system.primitivas.Linha import line_bresenham
 
 class GameOver:
 

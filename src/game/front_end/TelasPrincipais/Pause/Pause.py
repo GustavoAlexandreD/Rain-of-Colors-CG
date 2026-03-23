@@ -1,11 +1,11 @@
 import pygame
-from src.game.front_end.Componentes.Button import Button
-from src.game.front_end.TelasPrincipais.Pause.Pause_layout import PauseLayout
-from src.game.front_end.TelasPrincipais.Pause.Pause_controller import PauseController
-from src.game.front_end.Componentes.Text import draw_text_centered, draw_text_raster
-from src.game.front_end.helper.Responsive import Responsive
-from src.game.front_end.Componentes.TelaSuspensa import TelaSuspensa
-from src.system.primitivas.Linha import line_bresenham
+from game.front_end.Componentes.Button import Button
+from game.front_end.TelasPrincipais.Pause.Pause_layout import PauseLayout
+from game.front_end.TelasPrincipais.Pause.Pause_controller import PauseController
+from game.front_end.Componentes.Text import draw_text_centered, draw_text_raster
+from game.front_end.helper.Responsive import Responsive
+from game.front_end.Componentes.TelaSuspensa import TelaSuspensa
+from system.primitivas.Linha import line_bresenham
 
 class Pause:
 

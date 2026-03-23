@@ -1,4 +1,4 @@
-from src.game.scripts.Music_manager import play_audio
+from game.scripts.Music_manager import play_audio
 
 
 class PauseController:
