@@ -82,4 +82,4 @@ class Coracao(Objeto):
                 game_state.vida.coracoes.lives = game_state.vida.lives
                 game_state.vida.coracoes.draw()
         else:
-            game_state.registrar_acerto(250)
+            game_state.registrar_acerto(50)
