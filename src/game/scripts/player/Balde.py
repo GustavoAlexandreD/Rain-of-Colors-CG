@@ -51,6 +51,8 @@ class Balde():
         """
         self.points = self.controller.update(input_handler)
 
+        self.x = self.points[0][0]
+
     def draw(self, surface, boundary_thickness: int = 1):
 
         # 🔥 RESET padrão se nenhum efeito

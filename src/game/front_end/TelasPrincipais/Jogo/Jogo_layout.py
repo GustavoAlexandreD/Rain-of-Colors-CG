@@ -25,8 +25,8 @@ class JogoLayout:
     def set_rain_area_with_margins(self):
 
         self.rain_x_min = self.resp.wp(0.05)
-        self.rain_x_max = self.width - self.resp.wp(0.35)
-        self.spawn_above = self.resp.hp(0.15)
+        self.rain_x_max = self.resp.wp(0.62)
+        self.spawn_above = int(self.height * 1.5)
 
     def get_rain_area(self):
         return self.rain_x_min, self.rain_x_max, self.spawn_above

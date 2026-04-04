@@ -100,7 +100,7 @@ def world_to_viewport(xw, yw, window, viewport):
 
     # Inversão do eixo Y (porque tela cresce para baixo)
     yv = viewport.ymin + (
-        (window.ymax - yw) * viewport.height / window.height
+        (yw - window.ymin) * viewport.height / window.height
     )
 
     return round(xv), round(yv)
