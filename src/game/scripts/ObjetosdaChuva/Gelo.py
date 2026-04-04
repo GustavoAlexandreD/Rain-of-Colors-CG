@@ -8,7 +8,7 @@ from system.transformacoes_geometricas.Transformacoes_Geometricas import rotacao
 class Gelo(Objeto):
 
     def __init__(self, x, y):
-        super().__init__(x, y, (180, 220, 255), speed=3, radius=20)
+        super().__init__(x, y, (180, 220, 255), speed=3.0, radius=20.0)
         self.rotation_angle = 0  # ângulo em graus
 
     def update(self):

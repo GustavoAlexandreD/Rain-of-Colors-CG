@@ -3,7 +3,7 @@ import pygame
 
 class Objeto(ABC):
 
-    def __init__(self, x, y, color, speed=2, radius=8):
+    def __init__(self, x, y, color, speed=2.0, radius=8.0):
         self.x = x
         self.y = y
         self.color = color

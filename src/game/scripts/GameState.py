@@ -40,7 +40,7 @@ class GameState:
 
         # 🚀 DIFICULDADE (velocidade)
         self.base_speed = 3.0
-        self.max_speed = 10.0
+        self.max_speed = 25.0
         self.speed_increment = 0.1
 
     # =========================
@@ -54,7 +54,7 @@ class GameState:
     # 🚀 VELOCIDADE PROGRESSIVA
     # =========================
     def get_current_speed(self):
-        speed = self.base_speed + (self.score * self.speed_increment / 20)
+        speed = self.base_speed + (self.score * self.speed_increment / 5)
         return min(speed, self.max_speed)
 
     # =========================
@@ -107,7 +107,7 @@ class GameState:
         self.consecutive_catches += 1
         self.catches_for_color_change += 1
 
-        if self.consecutive_catches % 3 == 0:
+        if self.consecutive_catches % 3 == 0 and self.multiplier < 3:
             self.multiplier += 1
 
         # Pontuação

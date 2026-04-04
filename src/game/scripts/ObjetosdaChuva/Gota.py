@@ -1,6 +1,4 @@
 import random
-import math
-import pygame
 from .Objeto import Objeto
 from system.primitivas.Circulo import draw_circle_bresenham
 from system.primitivas.Linha import line_bresenham
@@ -17,7 +15,7 @@ class Gota(Objeto):
         (255, 0, 255)
     ]
 
-    def __init__(self, x, y, altura, largura, speed=3.5):
+    def __init__(self, x, y, altura, largura, speed=6.0):
         color = random.choice(self.COLORS)
         super().__init__(x, y, color, speed, radius=18)
         self.altura = altura

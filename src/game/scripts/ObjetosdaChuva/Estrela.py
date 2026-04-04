@@ -6,7 +6,7 @@ from system.transformacoes_geometricas.Transformacoes_Geometricas import escala
 class Estrela(Objeto):
 
     def __init__(self, x, y):
-        super().__init__(x, y, (255, 215, 0), speed=1.5, radius=30)
+        super().__init__(x, y, (255, 215, 0), speed=1.5, radius=30.0)
         self.twinkle_phase = True
 
     def draw(self, screen):

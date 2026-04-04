@@ -19,7 +19,7 @@ class Rain:
     - Objetos são removidos quando ultrapassam o limite inferior (`height`).
     """
 
-    def __init__(self, width, height, spawn_interval_frames=48, spawn_above=160):
+    def __init__(self, width, height, spawn_interval_frames=30, spawn_above=160):
         self.width = width
         self.height = height
 
@@ -41,7 +41,7 @@ class Rain:
         self.gotas_cycle_count = 0
 
         # 🔥 NOVO: controle de espaçamento entre objetos
-        self.min_spawn_distance = 60
+        self.min_spawn_distance = 160
         self.max_spawn_attempts = 10
 
         # cores a garantir por ciclo (usar nomes conforme Gota.COLORS ordem)
@@ -96,9 +96,12 @@ class Rain:
                     balde.boundary_color = (90, 60, 10)
                     balde.fill_color = (212, 175, 55)
 
+        difficulty_factor = current_speed / game_state.base_speed
+        intervalo_atual = max(4, int(self.spawn_interval / difficulty_factor))
+
         # spawn periodico (baseado em frames)
-        if self._frame % self.spawn_interval == 0:
-            self._spawn_one()
+        if self._frame % intervalo_atual == 0:
+            self._spawn_one(game_state)
 
     # =========================
     # 🔥 CONTROLE DE ESPAÇAMENTO
@@ -114,7 +117,7 @@ class Rain:
 
         return True
 
-    def _spawn_one(self):
+    def _spawn_one(self, game_state):
         x = None
         y = None
 
@@ -127,7 +130,7 @@ class Rain:
             if not self._is_position_valid(x, y):
                 continue
 
-            obj = FactoryChuva.create_objeto(x, y)
+            obj = FactoryChuva.create_objeto(x, y, game_state)
 
             # se for Gota, garantir distribuição de cores por ciclo de 10 gotas
             if isinstance(obj, Gota):

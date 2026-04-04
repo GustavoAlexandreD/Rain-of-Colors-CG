@@ -8,7 +8,7 @@ import math
 
 class Coracao(Objeto):
 
-    def __init__(self, x, y, size=28, speed=3):
+    def __init__(self, x, y, size=28.0, speed=3.0):
         super().__init__(x, y, (220, 20, 60), speed, radius=size // 2)
         self.size = size
 

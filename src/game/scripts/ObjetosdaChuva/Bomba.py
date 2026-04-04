@@ -10,7 +10,7 @@ class Bomba(Objeto):
 
     def __init__(self, x, y):
         # aumentar consideravelmente o tamanho da bomba
-        super().__init__(x, y, (40, 40, 40), speed=3, radius=27)
+        super().__init__(x, y, (40, 40, 40), speed=6.0, radius=27.0)
 
     def draw(self, screen):
 
