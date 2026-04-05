@@ -2,7 +2,7 @@ from system.transformacoes_geometricas.Transformacoes_Geometricas import transla
 
 class BaldeController:
 
-    def __init__(self, vertices, x_min, x_max, game_state, speed = 10):
+    def __init__(self, vertices, x_min, x_max, game_state, speed = 40):
 
         self.vertices = vertices
         self.x_min = x_min
