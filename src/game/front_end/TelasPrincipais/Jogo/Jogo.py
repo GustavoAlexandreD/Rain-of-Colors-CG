@@ -7,7 +7,6 @@ from game.front_end.TelasPrincipais.Jogo.Jogo_layout import JogoLayout
 from game.front_end.TelasPrincipais.Jogo.Jogo_controller import JogoController
 from game.front_end.Componentes.Text import draw_text_raster
 from game.scripts.Rain import Rain
-from game.scripts.player.Balde import Balde
 from game.front_end.Componentes.Coracoes import Coracoes
 from game.scripts.Vida import Vida
 from game.scripts.GameState import GameState
@@ -16,6 +15,7 @@ from game.scripts.player.Balde import Balde
 from system.primitivas.Circulo import draw_filled_circle_bresenham
 from system.transformacoes_geometricas.Janela_Viewport import Window, Viewport, world_to_viewport
 from system.primitivas.Linha import line_bresenham
+from system.preenchimento_e_textura.Texture_Mapping import scanline_texture_polygon
 
 
 class Jogo:
@@ -34,7 +34,7 @@ class Jogo:
         self.background = Background(
             width,
             height,
-            "assets/images/PlainBackground.jpeg"
+            "assets/images/JogoBackground.jpeg"
         )
         self.background.render_once()
 
@@ -90,6 +90,14 @@ class Jogo:
         
         self.caixa_viewport = Viewport(vp_x, vp_y, vp_x + vp_w, vp_y + vp_h)
 
+        self.background_viewport = Background(
+            self.caixa_viewport.width,
+            self.caixa_viewport.height,
+            "assets/images/PlainBackground.jpeg"
+        )
+
+        self.background_viewport.render_once()
+
     def update(self, input_handler):
         if not self.controller.pause and self.sistema_vida.lives>0:
             self.game_state.update()
@@ -105,23 +113,66 @@ class Jogo:
         self.balde.draw(surface, 3)
 
         # ==========================================
-        # 1. FUNDO DO PAINEL LATERAL E DIVISÓRIA
+        # 🔥 MÁSCARAS DO TETO E DO CHÃO (100% CG)
         # ==========================================
-        linha_divisao_x = self.resp.wp(0.65)
+        linha_divisao_x = self.resp.wp(0.65) 
         
-        cor_fundo_painel = (30, 35, 45) # Cor de fundo
+        # Ajuste a espessura se as bordas da sua imagem forem diferentes
+        espessura_teto = self.resp.hp(0.04) 
+        espessura_chao = self.resp.hp(0.04) 
+        y_inicio_chao = self.height - espessura_chao
 
-        pygame.draw.rect(surface, cor_fundo_painel, (linha_divisao_x, 0, self.width - linha_divisao_x, self.height)) # Colisão com a linha divisória
+        # 1. Coordenadas U (Horizontal) - É a mesma para teto e chão
+        u_max = (linha_divisao_x / self.width) * self.background.tex_w
 
-        # Linha divisória
-        line_bresenham(surface, linha_divisao_x, 0, linha_divisao_x, self.height, (0, 0, 0))
+        # 2. Coordenadas V (Vertical) - TETO
+        v_max_teto = (espessura_teto / self.height) * self.background.tex_h
+        
+        # 3. Coordenadas V (Vertical) - CHÃO
+        v_min_chao = (y_inicio_chao / self.height) * self.background.tex_h
+        v_max_chao = self.background.tex_h # Vai até o final da foto original
+
+        # Polígono do Teto
+        vertices_teto = [
+            (0, 0, 0, 0),
+            (linha_divisao_x, 0, u_max, 0),
+            (linha_divisao_x, espessura_teto, u_max, v_max_teto),
+            (0, espessura_teto, 0, v_max_teto)
+        ]
+
+        # Polígono do Chão
+        vertices_chao = [
+            (0, y_inicio_chao, 0, v_min_chao),
+            (linha_divisao_x, y_inicio_chao, u_max, v_min_chao),
+            (linha_divisao_x, self.height, u_max, v_max_chao),
+            (0, self.height, 0, v_max_chao)
+        ]
+
+        # Abrimos o Array de Pixels UMA vez para desenhar os dois
+        pixel_array_mask = pygame.PixelArray(surface)
+        
+        # Renderiza a tira do Teto
+        scanline_texture_polygon(
+            pixel_array_mask, self.width, self.height, vertices_teto,
+            self.background.texture_matrix, self.background.tex_w, self.background.tex_h, method="standard"
+        )
+        
+        # Renderiza a tira do Chão
+        scanline_texture_polygon(
+            pixel_array_mask, self.width, self.height, vertices_chao,
+            self.background.texture_matrix, self.background.tex_w, self.background.tex_h, method="standard"
+        )
+        
+        del pixel_array_mask
 
         # ==========================================
-        # 2. CAIXA DO VIEWPORT (MINIMAPA)
+        # CAIXA DO VIEWPORT (MINIMAPA)
         # ==========================================
         vx1, vy1 = self.caixa_viewport.xmin, self.caixa_viewport.ymin
         vx2, vy2 = self.caixa_viewport.xmax, self.caixa_viewport.ymax
         
+        self.background_viewport.draw(surface, vx1, vy1)
+
         # Borda da caixa
         cor_borda = (0, 0, 0)
         line_bresenham(surface, vx1, vy1, vx2, vy1, cor_borda) # Topo

@@ -72,10 +72,10 @@ class Background:
     # DESENHO (SUPER RÁPIDO)
     # ======================================================
 
-    def draw(self, surface):
+    def draw(self, surface, x=0, y=0):
 
         # garante que renderizou pelo menos 1 vez
         if not self._is_rendered:
             self.render_once()
 
-        surface.blit(self.cached_surface, (0, 0))
+        surface.blit(self.cached_surface, (x, y))

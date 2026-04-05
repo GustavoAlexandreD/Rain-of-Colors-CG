@@ -1,14 +1,13 @@
-import pygame
 from .Objeto import Objeto
 from system.primitivas.Circulo import draw_circle_bresenham
-from system.primitivas.Linha import line_bresenham
+from system.clipping.Cohen_Sutherland import draw_clipped_line
 from system.preenchimento_e_textura.Preenchimento import scanline_fill_polygon, flood_fill
 import math
 
 
 class Coracao(Objeto):
 
-    def __init__(self, x, y, size=28, speed=3):
+    def __init__(self, x, y, size=28.0, speed=3.0):
         super().__init__(x, y, (220, 20, 60), speed, radius=size // 2)
         self.size = size
 
@@ -33,9 +32,25 @@ class Coracao(Objeto):
         draw_circle_bresenham(surface, left_cx, top_cy, r, color)
         draw_circle_bresenham(surface, right_cx, top_cy, r, color)
 
-        line_bresenham(surface, left_cx - r, cy, bottom_x, bottom_y, color)
-        line_bresenham(surface, right_cx + r, cy, bottom_x, bottom_y, color)
-        line_bresenham(surface, left_cx - r, cy, right_cx + r, cy, color)
+        xmin, ymin = 0, 0
+        xmax = int(surface.get_width() * 0.66)
+        ymax = surface.get_height()
+
+        # contorno (círculos do topo continuam iguais)
+        draw_circle_bresenham(surface, left_cx, top_cy, r, color)
+        draw_circle_bresenham(surface, right_cx, top_cy, r, color)
+
+        # 🔥 AQUI ENTRA O RECORTE: Trocamos line_bresenham por draw_clipped_line
+        # E adicionamos os limites (xmin, ymin, xmax, ymax) antes da cor!
+        
+        # Linha diagonal esquerda
+        draw_clipped_line(surface, left_cx - r, cy, bottom_x, bottom_y, xmin, ymin, xmax, ymax, color)
+        
+        # Linha diagonal direita
+        draw_clipped_line(surface, right_cx + r, cy, bottom_x, bottom_y, xmin, ymin, xmax, ymax, color)
+        
+        # Linha horizontal que fecha o triângulo
+        draw_clipped_line(surface, left_cx - r, cy, right_cx + r, cy, xmin, ymin, xmax, ymax, color)
 
         # preenchimento
         try:

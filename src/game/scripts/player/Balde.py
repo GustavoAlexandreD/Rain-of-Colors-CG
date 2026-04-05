@@ -1,5 +1,5 @@
-from system.primitivas.Linha import line_bresenham
 from game.scripts.player.Balde_controller import BaldeController
+from system.clipping.Cohen_Sutherland import draw_clipped_line
 from system.preenchimento_e_textura.Preenchimento import scanline_fill
 
 class Balde():
@@ -78,11 +78,20 @@ class Balde():
         if boundary_thickness <= 0:
             boundary_thickness = 1
 
+        # Define os limites matemáticos do Cohen-Sutherland (Apenas a área de Jogo à esquerda)
+        xmin, ymin = 0, 0
+        xmax = int(surface.get_width() * 0.66)
+        ymax = surface.get_height()
+
         for i in range(boundary_thickness):
-            line_bresenham(surface, self.points[0][0]-i, self.points[0][1]+i, self.points[1][0]+i, self.points[1][1]+i, self.boundary_color)
-            line_bresenham(surface, self.points[1][0]+i, self.points[1][1]+i, self.points[2][0]+i, self.points[2][1]-i, self.boundary_color)
-            line_bresenham(surface, self.points[2][0]+i, self.points[2][1]-i, self.points[3][0]-i, self.points[3][1]-i, self.boundary_color)
-            line_bresenham(surface, self.points[3][0]-i, self.points[3][1]-i, self.points[0][0]-i, self.points[0][1]+i, self.boundary_color)
+            # Borda Superior
+            draw_clipped_line(surface, self.points[0][0]-i, self.points[0][1]+i, self.points[1][0]+i, self.points[1][1]+i, xmin, ymin, xmax, ymax, self.boundary_color)
+            # Borda Direita
+            draw_clipped_line(surface, self.points[1][0]+i, self.points[1][1]+i, self.points[2][0]+i, self.points[2][1]-i, xmin, ymin, xmax, ymax, self.boundary_color)
+            # Borda Inferior
+            draw_clipped_line(surface, self.points[2][0]+i, self.points[2][1]-i, self.points[3][0]-i, self.points[3][1]-i, xmin, ymin, xmax, ymax, self.boundary_color)
+            # Borda Esquerda
+            draw_clipped_line(surface, self.points[3][0]-i, self.points[3][1]-i, self.points[0][0]-i, self.points[0][1]+i, xmin, ymin, xmax, ymax, self.boundary_color)
 
     def fill(self, surface):
         scanline_fill(surface, self.points, self.fill_color)
