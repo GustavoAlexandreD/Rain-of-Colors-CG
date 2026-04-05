@@ -126,7 +126,7 @@ class Rain:
             if not self._is_position_valid(x, y):
                 continue
 
-            obj = FactoryChuva.create_objeto(x, y, game_state)
+            obj = FactoryChuva.create_objeto(x, y)
 
             # se for Gota, garantir distribuição de cores por ciclo de 10 gotas
             if isinstance(obj, Gota):
