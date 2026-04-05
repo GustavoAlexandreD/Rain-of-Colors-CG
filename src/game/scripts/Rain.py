@@ -1,12 +1,8 @@
 import random
 import math
 
-from game.scripts.ObjetosdaChuva.Estrela import Estrela
-from game.scripts.ObjetosdaChuva.Gelo import Gelo
 from .ObjetosdaChuva.FactoryChuva import FactoryChuva
 from .ObjetosdaChuva.Gota import Gota
-from .player import Balde
-
 
 class Rain:
     """Gerencia o spawn e atualização dos objetos da chuva.
@@ -40,7 +36,7 @@ class Rain:
         # controle de distribuição de cores das gotas
         self.gotas_cycle_count = 0
 
-        # 🔥 NOVO: controle de espaçamento entre objetos
+        # NOVO: controle de espaçamento entre objetos
         self.min_spawn_distance = 160
         self.max_spawn_attempts = 10
 

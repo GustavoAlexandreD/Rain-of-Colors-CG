@@ -3,6 +3,7 @@ import math
 from .Objeto import Objeto
 from system.preenchimento_e_textura.Preenchimento import scanline_fill_polygon
 from system.transformacoes_geometricas.Transformacoes_Geometricas import rotacao
+from system.clipping.Cohen_Sutherland import draw_clipped_line
 
 
 class Gelo(Objeto):
@@ -18,7 +19,7 @@ class Gelo(Objeto):
         self.y += self.speed
         self.rotation_angle = (self.rotation_angle + 3) % 360
 
-    def draw(self, screen):
+    def draw(self, surface):
 
         def snowflake_points(cx, cy, r):
             pts = []
@@ -47,19 +48,21 @@ class Gelo(Objeto):
         poly = rotacao(poly, self.rotation_angle, pivot=(self.x, self.y))
         poly = [(int(x), int(y)) for x, y in poly]
 
+        xmin, ymin = 0, 0
+        xmax = int(surface.get_width() * 0.66)
+        ymax = surface.get_height()
+
         try:
-            scanline_fill_polygon(screen, poly, self.color)
-            from system.primitivas.Linha import line_bresenham
+            scanline_fill_polygon(surface, poly, self.color)
             for i in range(len(poly)):
                 x0, y0 = poly[i]
                 x1, y1 = poly[(i + 1) % len(poly)]
-                line_bresenham(screen, x0, y0, x1, y1, (0,0,0))
+                draw_clipped_line(surface, x0, y0, x1, y1, xmin, ymin, xmax, ymax, (0, 0, 0))
         except Exception:
-            from system.primitivas.Linha import line_bresenham
             for i in range(len(poly)):
                 x0, y0 = poly[i]
                 x1, y1 = poly[(i + 1) % len(poly)]
-                line_bresenham(screen, x0, y0, x1, y1, self.color)
+                draw_clipped_line(surface, x0, y0, x1, y1, xmin, ymin, xmax, ymax, self.color)
 
     def on_collect(self, game_state):
         game_state.activate_freeze(180)
