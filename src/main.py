@@ -14,8 +14,11 @@ def main():
 
     pygame.init()
 
-    pygame.mixer.init()
-    play_soundtrack(volume=0.4)
+    try:
+        pygame.mixer.init()
+        play_soundtrack(volume=0.4)
+    except pygame.error as e:
+        print(f"Error initializing audio mixer: {e}")
 
     info = pygame.display.Info()
     WIDTH, HEIGHT = info.current_w, info.current_h
