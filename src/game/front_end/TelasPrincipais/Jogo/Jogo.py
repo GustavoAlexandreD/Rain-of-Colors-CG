@@ -81,7 +81,9 @@ class Jogo:
         self.game_over = GameOver(surface, width, height)
 
         # Configuração Viewport
-        self.mundo = Window(x_min, -spawn_above, x_max, self.height)
+        # Configuração Viewport
+        sobra_lateral = 20 # Sobra sutil pros lados no minimapa
+        self.mundo = Window(x_min - sobra_lateral, -spawn_above, x_max + sobra_lateral, self.height)
 
         vp_w = self.resp.wp(0.22)
         vp_h = self.resp.hp(0.50) 
@@ -225,12 +227,20 @@ class Jogo:
         # ==========================================
         # 3. TEXTOS, PODERES E CÍRCULO DA COR (ALINHADOS)
         # ==========================================
-        # ATENÇÃO: O PixelArray deve ser aberto APÓS o pygame.draw.rect do fundo!
-        pixel_array = pygame.PixelArray(surface)
-        
         centro_painel_x = self.caixa_viewport.xmin + (self.caixa_viewport.width // 2)
 
-        # Posição inicial do SCORE abaixada para dar respiro
+        # 🟢 PRIMEIRO: A tela está livre! Desenhamos o círculo usando a 'surface'
+        raio_cor = self.resp.s(40)
+        y_cor = vy2 + self.resp.hp(0.12)
+        
+        draw_filled_circle_bresenham(
+            surface, centro_painel_x, y_cor, raio_cor,
+            fill_color=self.game_state.current_color, boundary_color=(0, 0, 0), boundary_thickness=6
+        )
+
+        # 🔴 SEGUNDO: Agora sim, trancamos a tela para desenhar os textos rasterizados
+        pixel_array = pygame.PixelArray(surface)
+        
         y_atual_texto = self.resp.hp(0.06)
 
         texto_score = f"SCORE: {self.game_state.score:06d}"
@@ -251,17 +261,10 @@ class Jogo:
             texto_star = "STAR POWER!"
             draw_text_raster(pixel_array, self.font, texto_star, centro_painel_x, y_atual_texto, (255, 223, 0), "center")
 
-        # Círculo da Cor Atual e texto "COR" posicionados em relação ao fundo do minimapa
-        raio_cor = self.resp.s(40)
-        y_cor = vy2 + self.resp.hp(0.12)
-        
-        draw_filled_circle_bresenham(
-            surface, centro_painel_x, y_cor, raio_cor,
-            fill_color=self.game_state.current_color, boundary_color=(0, 0, 0), boundary_thickness=6
-        )
-
+        # Desenha o texto "COR" acima do círculo (usando o pixel_array)
         draw_text_raster(pixel_array, self.font, "COR", centro_painel_x, y_cor - self.resp.hp(0.09), (255, 255, 255), "center")
         
+        # 🟢 TERCEIRO: Deletamos a variável para destrancar a tela!
         del pixel_array
 
         if self.controller.pause:

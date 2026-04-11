@@ -1,10 +1,14 @@
+"""
+Módulo de Rasterização de Linhas.
+"""
 from .SetPixel import set_pixel
+
 def line_bresenham(surface, x0, y0, x1, y1, color):
     """
-    Desenha uma linha usando o algoritmo de Bresenham.
-    Compatível com a função set_pixel fornecida.
+    Rasteriza uma linha reta utilizando o Algoritmo de Bresenham.
+    Otimizado para usar apenas aritmética inteira (adições e subtrações),
+    calculando o parâmetro de decisão (d) para escolher o próximo pixel.
     """
-
     x0, y0 = int(x0), int(y0)
     x1, y1 = int(x1), int(y1)
 
@@ -25,13 +29,11 @@ def line_bresenham(surface, x0, y0, x1, y1, color):
         ystep = -1
         dy = -dy
 
-    # Bresenham clássico
     d = 2 * dy - dx
     incE = 2 * dy
     incNE = 2 * (dy - dx)
 
-    x = x0
-    y = y0
+    x, y = x0, y0
 
     while x <= x1:
         if steep:
@@ -44,17 +46,15 @@ def line_bresenham(surface, x0, y0, x1, y1, color):
         else:
             d += incNE
             y += ystep
-
         x += 1
 
 def line_dda(surface, x0, y0, x1, y1, color):
     """
-    Desenha uma reta usando o algoritmo DDA.
+    Rasteriza uma linha usando o Algoritmo DDA (Digital Differential Analyzer).
+    Utiliza cálculos de ponto flutuante (divisões) para encontrar o incremento.
     """
-
     x0, y0 = float(x0), float(y0)
     x1, y1 = float(x1), float(y1)
-
     dx = x1 - x0
     dy = y1 - y0
 
@@ -67,9 +67,7 @@ def line_dda(surface, x0, y0, x1, y1, color):
     x_inc = dx / steps
     y_inc = dy / steps
 
-    x = x0
-    y = y0
-
+    x, y = x0, y0
     for _ in range(steps + 1):
         set_pixel(surface, round(x), round(y), color)
         x += x_inc

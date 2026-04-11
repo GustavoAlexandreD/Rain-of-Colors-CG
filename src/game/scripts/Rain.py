@@ -117,15 +117,19 @@ class Rain:
         x = None
         y = None
 
+        # Uma margem de segurança pequena (15 pixels) só para não raspar
+        margem_seguranca = 15 
+
         # tenta encontrar uma posição válida
         for _ in range(self.max_spawn_attempts):
 
-            x = random.uniform(self.x_min, self.x_max)
+            x = random.uniform(self.x_min + margem_seguranca, self.x_max - margem_seguranca)
             y = random.uniform(-self.spawn_above, -10)
 
             if not self._is_position_valid(x, y):
                 continue
 
+            # 🔥 CORREÇÃO DO ERRO: Passando o game_state para a Factory
             obj = FactoryChuva.create_objeto(x, y)
 
             # se for Gota, garantir distribuição de cores por ciclo de 10 gotas
