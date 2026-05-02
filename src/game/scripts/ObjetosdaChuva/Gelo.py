@@ -2,7 +2,7 @@ import pygame
 import math
 from .Objeto import Objeto
 from system.preenchimento_e_textura.Preenchimento import scanline_fill_polygon
-from system.transformacoes_geometricas.Transformacoes_Geometricas import rotacao
+from system.transformacoes_geometricas.Transformacoes_Geometricas import rotacionar_vertices_pivot
 from system.clipping.Cohen_Sutherland import draw_clipped_line
 
 
@@ -44,8 +44,8 @@ class Gelo(Objeto):
         # Gera pontos base do floco
         poly = snowflake_points(self.x, self.y, self.radius)
         
-        # Aplica rotação ao redor do centro
-        poly = rotacao(poly, self.rotation_angle, pivot=(self.x, self.y))
+        # Aplica rotação ao redor do centro usando matrizes
+        poly = rotacionar_vertices_pivot(poly, self.rotation_angle, pivot=(self.x, self.y))
         poly = [(int(x), int(y)) for x, y in poly]
 
         xmin, ymin = 0, 0
@@ -65,4 +65,4 @@ class Gelo(Objeto):
                 draw_clipped_line(surface, x0, y0, x1, y1, xmin, ymin, xmax, ymax, self.color)
 
     def on_collect(self, game_state):
-        game_state.activate_freeze(180)
+        game_state.activate_freeze(100)

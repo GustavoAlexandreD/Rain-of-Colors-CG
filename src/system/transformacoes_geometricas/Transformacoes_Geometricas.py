@@ -1,131 +1,108 @@
 """
-Módulo de Transformações Geométricas 2D (Transformações Afins).
+Módulo de Transformações Geométricas 2D baseadas em Matrizes.
 
-Este módulo implementa operações matemáticas clássicas de Computação Gráfica
-para manipular objetos na tela. As operações simulam a multiplicação de 
-matrizes de transformação (Translação, Escala e Rotação) diretamente 
-sobre as coordenadas dos vértices.
-
-Nota: As funções retornam valores em ponto flutuante (float) para preservar
-a precisão matemática durante transformações sucessivas. Cabe ao rasterizador
-final (Bresenham/Scanline) arredondar esses valores para inteiros (pixels).
+Implementação do pipeline matricial conforme ementa da disciplina,
+onde as transformações (Translação, Escala, Rotação) geram matrizes 3x3
+que podem ser compostas antes de serem aplicadas aos vértices.
 """
 
 import math
 
-# ============================================================
-# TRANSLAÇÃO
-# ============================================================
+def identidade():
+    """Retorna a matriz identidade 3x3."""
+    return [
+        [1, 0, 0],
+        [0, 1, 0],
+        [0, 0, 1]
+    ]
 
-def translacao(vertices, tx, ty):
+def multiplica_matrizes(m1, m2):
     """
-    Aplica translação em uma lista de vértices.
-    
-    Matriz de Translação 2D (Coordenadas Homogêneas):
-    [ 1  0  tx ]   [ x ]   [ x + tx ]
-    [ 0  1  ty ] * [ y ] = [ y + ty ]
-    [ 0  0  1  ]   [ 1 ]   [   1    ]
-
-    Args:
-        vertices: Lista de tuplas (x, y).
-        tx: Fator de deslocamento no eixo X.
-        ty: Fator de deslocamento no eixo Y.
-
-    Retorna:
-        Nova lista de vértices deslocados.
+    Multiplica duas matrizes 3x3 (m1 * m2).
+    Usada para compor (concatenar) transformações.
     """
-    return [(x + tx, y + ty) for (x, y) in vertices]
+    result = [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
+    for i in range(3):
+        for j in range(3):
+            for k in range(3):
+                result[i][j] += m1[i][k] * m2[k][j]
+    return result
 
-
-# ============================================================
-# ESCALA
-# ============================================================
-
-def escala(vertices, sx, sy, pivot=None):
+def mat_mult_vec(m, v):
     """
-    Aplica escala (redimensionamento) em relação a um ponto pivot.
-    
-    Matriz de Escala 2D:
-    [ sx  0  0 ]
-    [  0 sy  0 ]
-    [  0  0  1 ]
-
-    A matemática utiliza a composição de 3 transformações quando há um pivot:
-    1. Translada o objeto para a origem (-px, -py).
-    2. Aplica a matriz de Escala.
-    3. Translada o objeto de volta para a posição original (+px, +py).
-
-    Args:
-        vertices: Lista de tuplas (x, y).
-        sx: Fator de escala no eixo X.
-        sy: Fator de escala no eixo Y.
-        pivot: Tupla (px, py) do ponto fixo. Se None, escala em relação à origem (0,0).
+    Multiplica uma matriz 3x3 por um vetor (x, y, 1).
     """
-    if pivot is None:
-        px, py = 0, 0
-    else:
-        px, py = pivot
+    return (
+        m[0][0]*v[0] + m[0][1]*v[1] + m[0][2]*v[2],
+        m[1][0]*v[0] + m[1][1]*v[1] + m[1][2]*v[2],
+        m[2][0]*v[0] + m[2][1]*v[1] + m[2][2]*v[2]
+    )
 
-    novos_vertices = []
-
+def apply_transform(vertices, mat):
+    """
+    Aplica uma matriz de transformação a uma lista de vértices.
+    """
+    transformed = []
     for x, y in vertices:
-        # 1. Move para a origem relativa ao pivot
-        x_rel = x - px
-        y_rel = y - py
-
-        # 2. Aplica o fator de escala
-        x_esc = x_rel * sx
-        y_esc = y_rel * sy
-
-        # 3. Retorna para a posição original no mundo
-        novos_vertices.append((x_esc + px, y_esc + py))
-
-    return novos_vertices
-
+        vx, vy, _ = mat_mult_vec(mat, (x, y, 1))
+        transformed.append((int(vx), int(vy)))
+    return transformed
 
 # ============================================================
-# ROTAÇÃO
+# GERADORES DE MATRIZES DE TRANSFORMAÇÃO
 # ============================================================
 
-def rotacao(vertices, angulo_graus, pivot=None):
-    """
-    Aplica rotação 2D (Trigonometria) em relação a um ponto pivot.
-    
-    Matriz de Rotação 2D:
-    [ cos(θ) -sin(θ)  0 ]
-    [ sin(θ)  cos(θ)  0 ]
-    [   0       0     1 ]
+def translacao(tx, ty):
+    """Retorna a matriz de translação 2D."""
+    return [
+        [1, 0, tx],
+        [0, 1, ty],
+        [0, 0, 1]
+    ]
 
-    Assim como na escala, exige translação para a origem e retorno caso
-    a rotação não seja em torno do ponto (0,0) global.
+def escala(sx, sy):
+    """Retorna a matriz de escala 2D."""
+    return [
+        [sx,  0, 0],
+        [ 0, sy, 0],
+        [ 0,  0, 1]
+    ]
 
-    Args:
-        vertices: Lista de tuplas (x, y).
-        angulo_graus: Ângulo de rotação em graus (convertido internamente para radianos).
-        pivot: Tupla (px, py) do ponto fixo (ex: centro do objeto).
-    """
-    if pivot is None:
-        px, py = 0, 0
-    else:
-        px, py = pivot
-
-    # A função math.cos e math.sin no Python exigem radianos
+def rotacao(angulo_graus):
+    """Retorna a matriz de rotação 2D (em torno da origem)."""
     theta = math.radians(angulo_graus)
-    cos_t = math.cos(theta)
-    sin_t = math.sin(theta)
+    c = math.cos(theta)
+    s = math.sin(theta)
+    return [
+        [ c, -s, 0],
+        [ s,  c, 0],
+        [ 0,  0, 1]
+    ]
 
-    novos_vertices = []
+# ============================================================
+# FUNÇÕES DE APOIO (Para manter a compatibilidade com seu código antigo)
+# ============================================================
 
-    for x, y in vertices:
-        # 1. Move para a origem relativa ao pivot
-        x_rel = x - px
-        y_rel = y - py
+def transladar_vertices(vertices, tx, ty):
+    mat = translacao(tx, ty)
+    return apply_transform(vertices, mat)
 
-        # 2. Aplica a Matriz de Rotação 2D
-        x_rot = (x_rel * cos_t) - (y_rel * sin_t)
-        y_rot = (x_rel * sin_t) + (y_rel * cos_t)
+def escalar_vertices_pivot(vertices, sx, sy, pivot=None):
+    px, py = pivot if pivot else (0, 0)
+    # Composição CORRETA: T(px, py) * S(sx, sy) * T(-px, -py)
+    # 1º Move para a origem (-), 2º Escala, 3º Volta para o lugar (+)
+    m = identidade()
+    m = multiplica_matrizes(translacao(-px, -py), m) # <-- SINAL NEGATIVO PRIMEIRO
+    m = multiplica_matrizes(escala(sx, sy), m)
+    m = multiplica_matrizes(translacao(px, py), m)   # <-- SINAL POSITIVO POR ÚLTIMO
+    return apply_transform(vertices, m)
 
-        # 3. Retorna para o sistema de coordenadas original
-        novos_vertices.append((x_rot + px, y_rot + py))
-
-    return novos_vertices
+def rotacionar_vertices_pivot(vertices, angulo_graus, pivot=None):
+    px, py = pivot if pivot else (0, 0)
+    # Composição CORRETA: T(px, py) * R(theta) * T(-px, -py)
+    # 1º Move para a origem (-), 2º Rotaciona, 3º Volta para o lugar (+)
+    m = identidade()
+    m = multiplica_matrizes(translacao(-px, -py), m)  # <-- SINAL NEGATIVO PRIMEIRO
+    m = multiplica_matrizes(rotacao(angulo_graus), m)
+    m = multiplica_matrizes(translacao(px, py), m)    # <-- SINAL POSITIVO POR ÚLTIMO
+    return apply_transform(vertices, m)

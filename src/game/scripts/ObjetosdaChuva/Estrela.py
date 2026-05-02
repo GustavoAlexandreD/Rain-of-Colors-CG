@@ -1,7 +1,7 @@
 import pygame
 from .Objeto import Objeto
 from system.preenchimento_e_textura.Preenchimento import scanline_fill_polygon
-from system.transformacoes_geometricas.Transformacoes_Geometricas import escala
+from system.transformacoes_geometricas.Transformacoes_Geometricas import escalar_vertices_pivot
 from system.clipping.Cohen_Sutherland import draw_clipped_line
 
 class Estrela(Objeto):
@@ -29,10 +29,11 @@ class Estrela(Objeto):
         ]
 
         if self.twinkle_phase:
-            points = escala(points, 1.1, 1.1, (self.x, self.y))
+            # Note que agora o pivot é passado de forma explícita pelo nome
+            points = escalar_vertices_pivot(points, 1.1, 1.1, pivot=(self.x, self.y))
             self.twinkle_phase = False
         else:
-            points = escala(points, 0.9, 0.9, (self.x,self.y))
+            points = escalar_vertices_pivot(points, 0.9, 0.9, pivot=(self.x, self.y))
             self.twinkle_phase = True
 
         # converter para int só no final (melhor prática)
