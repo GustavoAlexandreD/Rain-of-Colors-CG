@@ -87,7 +87,7 @@ class Rain:
 
                 if game_state.freeze:
                     balde.boundary_color = (30, 40, 60)
-                    balde.fill_color = (120, 140, 150)
+                    balde.fill_color_effect = (120, 140, 150)
                 elif game_state.star_power:
                     balde.boundary_color = (90, 60, 10)
                     balde.fill_color = (212, 175, 55)

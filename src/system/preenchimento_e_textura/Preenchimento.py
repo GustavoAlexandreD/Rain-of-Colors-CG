@@ -150,8 +150,18 @@ def scanline_fill_polygon(surface, vertices, fill_color):
             for x in range(x_start, x_end + 1):
                 set_pixel(surface, x, y, fill_color)
 
+def interpola_cor(c1, c2, t):
+    r = int(c1[0] + (c2[0]-c1[0])*t)
+    g = int(c1[1] + (c2[1]-c1[1])*t)
+    b = int(c1[2] + (c2[2]-c1[2])*t)
 
-def scanline_fill_polygon_gradient(surface, vertices, colors):
+    r = max(0, min(r, 255))
+    g = max(0, min(g, 255))
+    b = max(0, min(b, 255))
+    
+    return (r, g, b)
+
+def scanline_fill_gradient(surface, vertices, colors, a: float|None = None):
     """
     Preenchimento de polígono com sombreamento 2D de Gouraud (Gouraud Shading).
     
@@ -165,66 +175,50 @@ def scanline_fill_polygon_gradient(surface, vertices, colors):
     if len(vertices) != len(colors):
         raise ValueError("A quantidade de vértices e cores deve ser exatamente a mesma.")
 
-    ymin = int(min(y for _, y in vertices))
-    ymax = int(max(y for _, y in vertices))
+    ys = [p[1] for p in vertices]
+    y_min = int(min(ys))
+    y_max = int(max(ys))
 
-    for y in range(ymin, ymax + 1):
+    n = len(vertices)
+
+    for y in range(y_min, y_max):
         intersections = []
 
-        for i in range(len(vertices)):
-            x1, y1 = vertices[i]
-            x2, y2 = vertices[(i + 1) % len(vertices)]
+        for i in range(n):
+            x0, y0 = vertices[i]
+            x1, y1 = vertices[(i + 1) % n]
 
-            r1, g1, b1 = colors[i]
-            r2, g2, b2 = colors[(i + 1) % len(vertices)]
+            c0 = colors[i]
+            c1 = colors[(i + 1) % n]
 
-            if y1 == y2:
+            if y0 == y1:
                 continue
 
-            if (y >= min(y1, y2)) and (y < max(y1, y2)):
-                
-                # 't' é a proporção (de 0.0 a 1.0) do caminho percorrido na aresta vertical
-                t = (y - y1) / (y2 - y1)
+            if y0 > y1:
+                x0, y0, x1, y1 = x1, y1, x0, y0
+                c0, c1 = c1, c0
 
-                x = x1 + t * (x2 - x1)
+            if y < y0 or y >= y1:
+                continue
 
-                # Interpolação linear da cor na aresta
-                r = r1 + t * (r2 - r1)
-                g = g1 + t * (g2 - g1)
-                b = b1 + t * (b2 - b1)
+            ty = (y - y0)*a / (y1 - y0)
+            tx = (y - y0) / (y1 - y0)
+            x = x0 + tx*(x1 - x0)
+            cor_y = interpola_cor(c0, c1, ty)
 
-                intersections.append((x, r, g, b))
+            intersections.append((x, cor_y))
 
-        intersections.sort(key=lambda item: item[0])
+        intersections.sort(key=lambda i: i[0])
 
         for i in range(0, len(intersections), 2):
-            if i + 1 >= len(intersections):
-                break
+            if i + 1 < len(intersections):
+                x_ini, cor_ini = intersections[i]
+                x_fim, cor_fim = intersections[i + 1]
 
-            x_start, r_start, g_start, b_start = intersections[i]
-            x_end,   r_end,   g_end,   b_end   = intersections[i + 1]
+                if x_fim == x_ini:
+                    continue
 
-            x_start_int = int(round(x_start))
-            x_end_int   = int(round(x_end))
-
-            dx = x_end_int - x_start_int
-
-            if dx == 0:
-                continue
-
-            for x in range(x_start_int, x_end_int + 1):
-                
-                # 't' agora é a proporção do caminho percorrido na linha horizontal
-                t = (x - x_start_int) / dx
-
-                # Interpolação final da cor para o pixel exato
-                r = r_start + t * (r_end - r_start)
-                g = g_start + t * (g_end - g_start)
-                b = b_start + t * (b_end - b_start)
-
-                # Clamp para garantir que as cores fiquem no formato válido do Pygame (0 a 255)
-                r = max(0, min(int(r), 255))
-                g = max(0, min(int(g), 255))
-                b = max(0, min(int(b), 255))
-
-                set_pixel(surface, x, y, (r, g, b))
+                for x in range(int(x_ini), int(x_fim) + 1):
+                    t = (x - x_ini) / (x_fim - x_ini)
+                    cor = interpola_cor(cor_ini, cor_fim, t)
+                    set_pixel(surface, x, y, cor)

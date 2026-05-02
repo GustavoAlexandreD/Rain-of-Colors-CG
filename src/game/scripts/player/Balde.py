@@ -1,10 +1,10 @@
 from game.scripts.player.Balde_controller import BaldeController
 from system.clipping.Cohen_Sutherland import draw_clipped_line
-from system.preenchimento_e_textura.Preenchimento import scanline_fill
+from system.preenchimento_e_textura.Preenchimento import scanline_fill, scanline_fill_gradient
 
 class Balde():
 
-    def __init__(self, game_state, x, y, x_min, x_max, height: int = 100, top_width: int = 70, base_width: int = 60):
+    def __init__(self, game_state, x, y, x_min, x_max, height: int = 80, top_width: int = 70, base_width: int = 60):
         self.x = x
         self.y = y
         self.set_size(height, top_width, base_width)
@@ -14,6 +14,7 @@ class Balde():
 
         self.boundary_color = (0,0,0)
         self.fill_color = (139,69,19)
+        self.fill_color_effect = (139,69,19)
         self.controller = BaldeController(self.points, self.x_min, self.x_max, game_state)
 
     def get_dimensions(self):
@@ -23,10 +24,10 @@ class Balde():
         center = self.x + self.top_width // 2
 
         self.points = [
-            (self.x, self.y + self.base_width // 3),
-            (self.x + self.top_width, self.y + self.base_width // 3),
-            (center + self.base_width // 2, self.y + self.height - self.base_width // 4),
-            (center - self.base_width // 2, self.y + self.height - self.base_width // 4),
+            (self.x, self.y),
+            (self.x + self.top_width, self.y),
+            (center + self.base_width // 2, self.y + self.height),
+            (center - self.base_width // 2, self.y + self.height),
         ]
 
     def set_size(self, height: int, top_width: int, base_width: int):
@@ -94,10 +95,8 @@ class Balde():
             draw_clipped_line(surface, self.points[3][0]-i, self.points[3][1]-i, self.points[0][0]-i, self.points[0][1]+i, xmin, ymin, xmax, ymax, self.boundary_color)
 
     def fill(self, surface):
-        scanline_fill(surface, self.points, self.fill_color)
-
-    def on_collect(self, game_state):
-        """
-        Define o que acontece quando o jogador pega o objeto
-        """
-        pass
+        if self.game_state.freeze:
+            t = self.game_state.freeze_timer / 10
+            scanline_fill_gradient(surface, self.points, [self.fill_color, self.fill_color, self.fill_color_effect, self.fill_color_effect], t)
+        else:
+            scanline_fill(surface, self.points, self.fill_color)
