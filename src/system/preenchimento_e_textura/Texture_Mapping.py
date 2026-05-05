@@ -34,7 +34,7 @@ def scanline_texture_polygon(
     2. Interpolação Horizontal: Calcula a taxa de variação (Slope/Step) do U e V por pixel.
 
     Args:
-        pixel_array: pygame.PixelArray da tela (Buffer de vídeo destravado).
+        pixel_array: PixelArrayClone que funciona como o pygame.PixelArray da tela (Buffer de vídeo destravado).
         screen_w, screen_h: Dimensões da tela para recorte (Clipping).
         vertices_uv: Lista de vértices no formato (X_tela, Y_tela, U_textura, V_textura).
                      NOTA: U e V aqui são absolutos (0 a tex_w), não normalizados!

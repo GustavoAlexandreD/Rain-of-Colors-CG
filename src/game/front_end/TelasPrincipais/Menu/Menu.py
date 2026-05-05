@@ -3,6 +3,7 @@ import pygame
 from game.front_end.helper.Responsive import Responsive
 from game.front_end.TelasPrincipais.Menu.Menu_layout import MenuLayout
 from game.front_end.TelasPrincipais.Menu.Menu_controller import MenuController
+from system.preenchimento_e_textura.utils import PixelArrayClone
 from system.primitivas.Linha import line_bresenham
 from game.front_end.Componentes.Button import Button
 from game.front_end.Componentes.Text import draw_text_centered
@@ -90,7 +91,7 @@ class Menu:
 
         selected_index = self.controller.get_selected_index()
 
-        pixel_array = pygame.PixelArray(surface)
+        pixel_array = PixelArrayClone(surface)
 
         for i, button in enumerate(self.buttons):
 

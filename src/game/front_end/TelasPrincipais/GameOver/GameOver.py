@@ -5,6 +5,7 @@ from game.front_end.TelasPrincipais.GameOver.GameOver_controller import GameOver
 from game.front_end.Componentes.Text import draw_text_centered, draw_text_raster
 from game.front_end.helper.Responsive import Responsive
 from game.front_end.Componentes.TelaSuspensa import TelaSuspensa
+from system.preenchimento_e_textura.utils import PixelArrayClone
 from system.primitivas.Linha import line_bresenham
 
 class GameOver:
@@ -81,7 +82,7 @@ class GameOver:
 
     def draw(self):
 
-        pixel_array = pygame.PixelArray(self.surface)
+        pixel_array = PixelArrayClone(self.surface)
 
         cx, cy = self.layout.get_center()
         medidas_painel = self.layout.get_panel()

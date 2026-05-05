@@ -1,6 +1,6 @@
 import pygame
 from system.preenchimento_e_textura.Texture_Mapping import scanline_texture_polygon
-
+from system.preenchimento_e_textura.utils import PixelArrayClone
 
 class Background:
 
@@ -44,7 +44,7 @@ class Background:
         if self._is_rendered:
             return
 
-        pixel_array = pygame.PixelArray(self.cached_surface)
+        pixel_array = PixelArrayClone(self.cached_surface)
 
         vertices_uv = [
             (0, 0, 0, 0),

@@ -7,6 +7,7 @@ from game.front_end.Componentes.Text import draw_text_centered, draw_text_raster
 from game.front_end.helper.Responsive import Responsive
 from game.front_end.Componentes.TelaSuspensa import TelaSuspensa
 from system.primitivas.Linha import line_bresenham
+from system.preenchimento_e_textura.utils import PixelArrayClone
 
 
 class Estatisticas:
@@ -38,7 +39,7 @@ class Estatisticas:
 
         self.background.draw(surface)
 
-        pixel_array = pygame.PixelArray(surface)
+        pixel_array = PixelArrayClone(surface)
 
         cx, cy = self.layout.get_center()
         medidas_painel, pontuations_pos = self.layout.get_panel()

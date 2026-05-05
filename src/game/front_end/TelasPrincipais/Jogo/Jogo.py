@@ -12,6 +12,7 @@ from game.scripts.Vida import Vida
 from game.scripts.GameState import GameState
 from game.scripts.Rain import Rain
 from game.scripts.player.Balde import Balde
+from system.preenchimento_e_textura.utils import PixelArrayClone
 from system.primitivas.Circulo import draw_filled_circle_bresenham
 from system.transformacoes_geometricas.Janela_Viewport import Window, Viewport, world_to_viewport
 from system.primitivas.Linha import line_bresenham
@@ -151,7 +152,7 @@ class Jogo:
         ]
 
         # Abrimos o Array de Pixels UMA vez para desenhar os dois
-        pixel_array_mask = pygame.PixelArray(surface)
+        pixel_array_mask = PixelArrayClone(surface)
         
         # Renderiza a tira do Teto
         scanline_texture_polygon(
@@ -239,7 +240,7 @@ class Jogo:
         )
 
         # 🔴 SEGUNDO: Agora sim, trancamos a tela para desenhar os textos rasterizados
-        pixel_array = pygame.PixelArray(surface)
+        pixel_array = PixelArrayClone(surface)
         
         y_atual_texto = self.resp.hp(0.06)
 
