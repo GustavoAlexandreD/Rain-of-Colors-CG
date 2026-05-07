@@ -103,16 +103,58 @@ class Jogo:
         self.background_viewport.render_once()
 
     def update(self, input_handler):
-        if not self.controller.pause and self.sistema_vida.lives>0:
+        if not self.controller.pause and self.sistema_vida.lives > 0:
             self.game_state.update()
             self.rain.update(self.balde, self.game_state)
+
+            # =========================================================
+            # CÂMERA A SEGUIR O BALDE (SÓ SE HOUVER ZOOM)
+            # =========================================================
+            if self.zoom != 1:
+                # Pegamos na velocidade definida no controller do balde
+                v_balde = self.balde.controller.speed
+                
+                # Se o balde estiver a mover-se para a direita e tiver espaço
+                if input_handler.move_right and not self.game_state.freeze:
+                    # Usamos 'points' em vez de 'vertices'
+                    if self.balde.points[1][0] < self.balde.x_max:
+                        self.mundo.translate(v_balde, 0)
+                
+                # Se o balde estiver a mover-se para a esquerda e tiver espaço
+                if input_handler.move_left and not self.game_state.freeze:
+                    if self.balde.points[0][0] > self.balde.x_min:
+                        self.mundo.translate(-v_balde, 0)
+            
+            # Atualiza a posição física do balde no mundo
             self.balde.update(input_handler)
+            
+        # Lógica de Zoom Suave
+        fator_zoom = 1.03  # Zoom contínuo suave (3% por frame)
+        
         if self.controller.zoom_in and self.zoom < 1.5:
-            self.zoom *= 1.2
-            self.mundo.zoom(1.2)
+            self.zoom *= fator_zoom
+            self.mundo.zoom(fator_zoom)
+            
         if self.controller.zoom_out and self.zoom > 1.0:
-            self.zoom /= 1.2
-            self.mundo.zoom(1 / 1.2)
+            self.zoom /= fator_zoom
+            
+            # Se o zoom voltou para quase 1 (margem de erro do float)
+            if self.zoom < 1.05: 
+                self.zoom = 1.0
+                # Reset perfeito para a câmera original
+                self.mundo.xmin = self.mundo.limit_xmin
+                self.mundo.xmax = self.mundo.limit_xmax
+                self.mundo.ymin = self.mundo.limit_ymin
+                self.mundo.ymax = self.mundo.limit_ymax
+            else:
+                self.mundo.zoom(1 / fator_zoom)
+            
+        # Lógica de Translação Manual (Setas)
+        if self.zoom != 1:  
+            velocidade_pan = 15
+            if self.controller.pan_up: self.mundo.translate(0, -velocidade_pan)
+            if self.controller.pan_down: self.mundo.translate(0, velocidade_pan)
+            
         return self.controller.update(input_handler)
 
     def draw(self, surface):

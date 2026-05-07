@@ -35,6 +35,11 @@ class InputHandler:
         # Controle interno
         self.quit = False
 
+        self.pan_up = False
+        self.pan_down = False
+        self.pan_left = False
+        self.pan_right = False
+
 
     # ======================================================
     # Atualiza estados a cada frame
@@ -50,8 +55,7 @@ class InputHandler:
         self.mouse_click = False
         self.menu_back = False
         self.pause = False
-        self.zoom_in = False
-        self.zoom_out = False
+        
 
         for event in pygame.event.get():
 
@@ -95,11 +99,21 @@ class InputHandler:
                 if event.key == pygame.K_p:
                     self.pause = True
 
+                # Zoom
                 if event.key == pygame.K_PLUS or event.key == pygame.K_EQUALS:
                     self.zoom_in = True
-                
                 if event.key == pygame.K_MINUS or event.key == pygame.K_UNDERSCORE:
                     self.zoom_out = True
+
+                # Pan (Translação)
+                if event.key == pygame.K_UP:
+                    self.pan_up = True
+                if event.key == pygame.K_DOWN:
+                    self.pan_down = True
+                if event.key == pygame.K_LEFT:
+                    self.pan_left = True
+                if event.key == pygame.K_RIGHT:
+                    self.pan_right = True
 
             # ---------------------------------
             # TECLADO (soltou tecla)
@@ -113,11 +127,21 @@ class InputHandler:
                 if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
                     self.move_right = False
                 
+                # Zoom
                 if event.key == pygame.K_PLUS or event.key == pygame.K_EQUALS:
                     self.zoom_in = False
-                
                 if event.key == pygame.K_MINUS or event.key == pygame.K_UNDERSCORE:
                     self.zoom_out = False
+
+                # Pan (Translação)
+                if event.key == pygame.K_UP:
+                    self.pan_up = False
+                if event.key == pygame.K_DOWN:
+                    self.pan_down = False
+                if event.key == pygame.K_LEFT:
+                    self.pan_left = False
+                if event.key == pygame.K_RIGHT:
+                    self.pan_right = False
 
             # ---------------------------------
             # MOUSE

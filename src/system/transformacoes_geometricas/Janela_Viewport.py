@@ -13,12 +13,39 @@ class Window:
     def __init__(self, xmin, ymin, xmax, ymax):
         self.xmin, self.ymin = float(xmin), float(ymin)
         self.xmax, self.ymax = float(xmax), float(ymax)
+        
+        # Guardar os limites iniciais (As paredes do mundo original)
+        self.limit_xmin = self.xmin
+        self.limit_ymin = self.ymin
+        self.limit_xmax = self.xmax
+        self.limit_ymax = self.ymax
 
     @property
     def width(self): return self.xmax - self.xmin
-
     @property
     def height(self): return self.ymax - self.ymin
+
+    def translate(self, tx, ty):
+        """
+        Move a janela limitando o movimento às bordas do mundo original.
+        """
+        # 1. Verifica se vai bater nos limites horizontais (Esquerda/Direita)
+        if self.xmin + tx < self.limit_xmin:
+            tx = self.limit_xmin - self.xmin  # Trava na esquerda
+        elif self.xmax + tx > self.limit_xmax:
+            tx = self.limit_xmax - self.xmax  # Trava na direita
+
+        # 2. Verifica se vai bater nos limites verticais (Cima/Baixo)
+        if self.ymin + ty < self.limit_ymin:
+            ty = self.limit_ymin - self.ymin  # Trava no teto
+        elif self.ymax + ty > self.limit_ymax:
+            ty = self.limit_ymax - self.ymax  # Trava no chão
+
+        # 3. Aplica apenas o movimento permitido
+        self.xmin += tx
+        self.xmax += tx
+        self.ymin += ty
+        self.ymax += ty
 
     # ----------------------------
     # Zoom da janela
@@ -26,16 +53,41 @@ class Window:
     # zoom < 1  -> afasta
     # ----------------------------
     def zoom(self, factor):
-        cx = (self.xmin + self.xmax) / 2
-        cy = (self.ymin + self.ymax) / 2
+        """
+        Aumenta ou diminui a área de visão a partir do centro.
+        """
+        cx, cy = (self.xmin + self.xmax) / 2, (self.ymin + self.ymax) / 2
+        
+        nova_largura = self.width / factor
+        nova_altura = self.height / factor
+        
+        self.xmin = cx - nova_largura / 2
+        self.xmax = cx + nova_largura / 2
+        self.ymin = cy - nova_altura / 2
+        self.ymax = cy + nova_altura / 2
 
-        new_half_width  = (self.width  / 2) / factor
-        new_half_height = (self.height / 2) / factor
+        # ==========================================
+        # TRAVA DE SEGURANÇA (CLAMPING)
+        # ==========================================
+        if self.xmin < self.limit_xmin:
+            shift = self.limit_xmin - self.xmin
+            self.xmin += shift
+            self.xmax += shift
+            
+        if self.xmax > self.limit_xmax:
+            shift = self.xmax - self.limit_xmax
+            self.xmin -= shift
+            self.xmax -= shift
 
-        self.xmin = cx - new_half_width
-        self.xmax = cx + new_half_width
-        self.ymin = cy - new_half_height
-        self.ymax = cy + new_half_height
+        if self.ymin < self.limit_ymin:
+            shift = self.limit_ymin - self.ymin
+            self.ymin += shift
+            self.ymax += shift
+            
+        if self.ymax > self.limit_ymax:
+            shift = self.ymax - self.limit_ymax
+            self.ymin -= shift
+            self.ymax -= shift
 
 class Viewport:
     def __init__(self, xmin, ymin, xmax, ymax):
