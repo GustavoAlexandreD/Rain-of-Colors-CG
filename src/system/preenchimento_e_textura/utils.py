@@ -1,5 +1,5 @@
 import pygame
-
+from system.primitivas.SetPixel import set_pixel
 
 class PixelArrayClone:
     def __init__(self, surface):
@@ -31,9 +31,9 @@ class PixelArrayClone:
 
                 for i in xs:
                     for j in ys:
-                        self.surface.set_at((i, j), value)
+                        set_pixel(self.surface, i, j, value)
             else:
-                self.surface.set_at((x, y), value)
+                set_pixel(self.surface, x, y, value)
 
     def close(self):
         if self.locked:
@@ -53,4 +53,4 @@ class ColumnView:
         return self.pxarray.surface.get_at((self.x, y))
 
     def __setitem__(self, y, value):
-        self.pxarray.surface.set_at((self.x, y), value)
+        set_pixel(self.pxarray.surface, self.x, y, value)
