@@ -1,6 +1,7 @@
 import pygame
 from system.preenchimento_e_textura.Texture_Mapping import scanline_texture_polygon
 from system.preenchimento_e_textura.utils import PixelArrayClone
+from system.primitivas.GetPixel import get_pixel
 
 class Background:
 
@@ -23,7 +24,7 @@ class Background:
         # ==============================
 
         self.texture_matrix = [
-            [self.texture.get_at((x, y)) for y in range(self.tex_h)]
+            [get_pixel(self.texture, x, y) for y in range(self.tex_h)]
             for x in range(self.tex_w)
         ]
 

@@ -1,5 +1,7 @@
 from typing import Literal
 
+from system.primitivas.GetPixel import get_pixel
+
 def draw_text_raster(pixel_array, font, text, x, y, color, orientation: Literal["center"]| None = None):
         """
         Renderiza texto desenhando pixel por pixel.
@@ -26,7 +28,7 @@ def draw_text_raster(pixel_array, font, text, x, y, color, orientation: Literal[
         for px in range(w):
             for py in range(h):
                 # Pega a cor do pixel do texto
-                curr_color = text_surface.get_at((px, py))
+                curr_color = get_pixel(text_surface, px, py)
 
                 # Só desenha se não for transparente
                 if curr_color.a > 10:

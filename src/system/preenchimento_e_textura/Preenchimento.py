@@ -7,6 +7,7 @@ e o algoritmo de Varredura (Scanline), além de suporte a sombreamento de Gourau
 """
 
 from collections import deque
+from system.primitivas.GetPixel import get_pixel
 from system.primitivas.SetPixel import set_pixel
 
 # ============================================================
@@ -28,7 +29,7 @@ def flood_fill(surface, x, y, fill_color):
     if not (0 <= x < width and 0 <= y < height):
         return
 
-    target_color = surface.get_at((x, y))
+    target_color = get_pixel(surface, x, y)
 
     # Se a cor já for a de preenchimento, ignora para evitar loop infinito
     if target_color == fill_color:
@@ -43,7 +44,7 @@ def flood_fill(surface, x, y, fill_color):
         if not (0 <= px < width and 0 <= py < height):
             continue
 
-        current_color = surface.get_at((px, py))
+        current_color = get_pixel(surface, px, py)
 
         if current_color != target_color:
             continue
@@ -77,7 +78,7 @@ def boundary_fill(surface, x, y, fill_color, boundary_color):
         if not (0 <= px < width and 0 <= py < height):
             continue
 
-        current_color = surface.get_at((px, py))
+        current_color = get_pixel(surface, px, py)
 
         # Para se bater na fronteira ou se o pixel já foi pintado com a cor de preenchimento
         if current_color == boundary_color or current_color == fill_color:
