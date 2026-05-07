@@ -37,11 +37,3 @@ class Objeto(ABC):
 
     def is_off_screen(self, screen_height):
         return self.y > screen_height - (screen_height * 0.04)
-
-    def get_rect(self):
-        return pygame.Rect(
-            self.x - self.radius,
-            self.y - self.radius,
-            self.radius * 2,
-            self.radius * 2
-        )
