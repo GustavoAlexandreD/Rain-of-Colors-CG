@@ -81,10 +81,11 @@ class Jogo:
         self.pause = Pause(surface, width, height)
         self.game_over = GameOver(surface, width, height)
 
-        # Configuração Viewport
-        # Configuração Viewport
+        # Configuração Janela e Viewport
+        self.zoom = 1
         sobra_lateral = 20 # Sobra sutil pros lados no minimapa
         self.mundo = Window(x_min - sobra_lateral, -spawn_above, x_max + sobra_lateral, self.height)
+        self.mundo.zoom(self.zoom)
 
         vp_w = self.resp.wp(0.22)
         vp_h = self.resp.hp(0.50) 
@@ -106,6 +107,12 @@ class Jogo:
             self.game_state.update()
             self.rain.update(self.balde, self.game_state)
             self.balde.update(input_handler)
+        if self.controller.zoom_in and self.zoom < 1.5:
+            self.zoom *= 1.2
+            self.mundo.zoom(1.2)
+        if self.controller.zoom_out and self.zoom > 1.0:
+            self.zoom /= 1.2
+            self.mundo.zoom(1 / 1.2)
         return self.controller.update(input_handler)
 
     def draw(self, surface):
@@ -196,34 +203,35 @@ class Jogo:
                     
                 if tipo == "Gota":
                     # Gota: Círculo normal com borda
-                    draw_filled_circle_bresenham(surface, obj_vx, obj_vy, 3, obj.color, (0,0,0), 1)
+                    draw_filled_circle_bresenham(surface, obj_vx, obj_vy, int(self.zoom*3), obj.color, (0,0,0), 1)
                     
                 elif tipo == "Bomba":
                     # Bomba: Agora é PRETA para destacar do fundo, com um pavio vermelho
-                    draw_filled_circle_bresenham(surface, obj_vx, obj_vy, 4, (0, 0, 0), (255, 0, 0), 1)
-                    line_bresenham(surface, obj_vx, obj_vy - 4, obj_vx + 2, obj_vy - 7, (255, 0, 0))
+                    draw_filled_circle_bresenham(surface, obj_vx, obj_vy, int(self.zoom*4), (0, 0, 0), (255, 0, 0), 1)
+                    line_bresenham(surface, obj_vx, obj_vy - int(self.zoom*4), obj_vx + int(self.zoom*2), obj_vy - int(self.zoom*7), (255, 0, 0))
                     
                 elif tipo == "Estrela":
                     # Estrela: Bolinha amarela com uma cruz de brilho branca
-                    draw_filled_circle_bresenham(surface, obj_vx, obj_vy, 4, (255, 215, 0), (255, 255, 255), 1)
-                    line_bresenham(surface, obj_vx - 5, obj_vy, obj_vx + 5, obj_vy, (255, 255, 255))
-                    line_bresenham(surface, obj_vx, obj_vy - 5, obj_vx, obj_vy + 5, (255, 255, 255))
+                    draw_filled_circle_bresenham(surface, obj_vx, obj_vy, int(self.zoom*4), (255, 215, 0), (255, 255, 255), 1)
+                    line_bresenham(surface, obj_vx - int(self.zoom*5), obj_vy, obj_vx + int(self.zoom*5), obj_vy, (255, 255, 255))
+                    line_bresenham(surface, obj_vx, obj_vy - int(self.zoom*5), obj_vx, obj_vy + int(self.zoom*5), (255, 255, 255))
                     
                 elif tipo == "Gelo":
                     # Gelo: Bolinha azul clara com um 'X' branco no meio
-                    draw_filled_circle_bresenham(surface, obj_vx, obj_vy, 4, (180, 220, 255), (255, 255, 255), 1)
-                    line_bresenham(surface, obj_vx - 3, obj_vy - 3, obj_vx + 3, obj_vy + 3, (255, 255, 255))
-                    line_bresenham(surface, obj_vx - 3, obj_vy + 3, obj_vx + 3, obj_vy - 3, (255, 255, 255))
+                    draw_filled_circle_bresenham(surface, obj_vx, obj_vy, int(self.zoom*4), (180, 220, 255), (255, 255, 255), 1)
+                    line_bresenham(surface, obj_vx - int(self.zoom*3), obj_vy - int(self.zoom*3), obj_vx + int(self.zoom*3), obj_vy + int(self.zoom*3), (255, 255, 255))
+                    line_bresenham(surface, obj_vx - int(self.zoom*3), obj_vy + int(self.zoom*3), obj_vx + int(self.zoom*3), obj_vy - int(self.zoom*3), (255, 255, 255))
                     
                 elif tipo == "Coracao":
                     # Coração: Bolinha vermelha com um pequeno 'V' rosa desenhado em cima
-                    draw_filled_circle_bresenham(surface, obj_vx, obj_vy, 4, (220, 20, 60), (255, 182, 193), 1)
-                    line_bresenham(surface, obj_vx - 3, obj_vy, obj_vx, obj_vy + 4, (255, 182, 193))
-                    line_bresenham(surface, obj_vx + 3, obj_vy, obj_vx, obj_vy + 4, (255, 182, 193))
+                    draw_filled_circle_bresenham(surface, obj_vx, obj_vy, int(self.zoom*4), (220, 20, 60), (255, 182, 193), 1)
+                    line_bresenham(surface, obj_vx - int(self.zoom*3), obj_vy, obj_vx, obj_vy + int(self.zoom*4), (255, 182, 193))
+                    line_bresenham(surface, obj_vx + int(self.zoom*3), obj_vy, obj_vx, obj_vy + int(self.zoom*4), (255, 182, 193))
 
         # Desenhar o Balde no minimapa
         balde_vx, balde_vy = world_to_viewport(self.balde.x + self.balde.top_width//2, self.balde.y, self.mundo, self.caixa_viewport)
-        draw_filled_circle_bresenham(surface, balde_vx, balde_vy, 5, (139,69,19), (0,0,0), 0)
+        if vx1 + 5 < balde_vx < vx2 - 5 and vy1 + 5 < balde_vy < vy2 - 5:
+            draw_filled_circle_bresenham(surface, balde_vx, balde_vy, int(self.zoom*5), (139,69,19), (0,0,0), 0)
 
         # ==========================================
         # 3. TEXTOS, PODERES E CÍRCULO DA COR (ALINHADOS)

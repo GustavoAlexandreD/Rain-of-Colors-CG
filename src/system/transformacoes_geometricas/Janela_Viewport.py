@@ -16,8 +16,26 @@ class Window:
 
     @property
     def width(self): return self.xmax - self.xmin
+
     @property
     def height(self): return self.ymax - self.ymin
+
+    # ----------------------------
+    # Zoom da janela
+    # zoom > 1  -> aproxima
+    # zoom < 1  -> afasta
+    # ----------------------------
+    def zoom(self, factor):
+        cx = (self.xmin + self.xmax) / 2
+        cy = (self.ymin + self.ymax) / 2
+
+        new_half_width  = (self.width  / 2) / factor
+        new_half_height = (self.height / 2) / factor
+
+        self.xmin = cx - new_half_width
+        self.xmax = cx + new_half_width
+        self.ymin = cy - new_half_height
+        self.ymax = cy + new_half_height
 
 class Viewport:
     def __init__(self, xmin, ymin, xmax, ymax):

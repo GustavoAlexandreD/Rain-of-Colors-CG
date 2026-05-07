@@ -24,6 +24,10 @@ class InputHandler:
         #Navegação entre telas
         self.escape = False
 
+        #Zoom da tela de jogo
+        self.zoom_in = False
+        self.zoom_out = False
+
         # Mouse
         self.mouse_click = False
         self.mouse_pos = (0, 0)
@@ -46,6 +50,8 @@ class InputHandler:
         self.mouse_click = False
         self.menu_back = False
         self.pause = False
+        self.zoom_in = False
+        self.zoom_out = False
 
         for event in pygame.event.get():
 
@@ -89,6 +95,12 @@ class InputHandler:
                 if event.key == pygame.K_p:
                     self.pause = True
 
+                if event.key == pygame.K_PLUS or event.key == pygame.K_EQUALS:
+                    self.zoom_in = True
+                
+                if event.key == pygame.K_MINUS or event.key == pygame.K_UNDERSCORE:
+                    self.zoom_out = True
+
             # ---------------------------------
             # TECLADO (soltou tecla)
             # ---------------------------------
@@ -100,6 +112,12 @@ class InputHandler:
 
                 if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
                     self.move_right = False
+                
+                if event.key == pygame.K_PLUS or event.key == pygame.K_EQUALS:
+                    self.zoom_in = False
+                
+                if event.key == pygame.K_MINUS or event.key == pygame.K_UNDERSCORE:
+                    self.zoom_out = False
 
             # ---------------------------------
             # MOUSE
