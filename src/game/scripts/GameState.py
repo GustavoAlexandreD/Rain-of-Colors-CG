@@ -39,7 +39,7 @@ class GameState:
         self.freeze_timer = 0
 
         # 🚀 DIFICULDADE (velocidade)
-        self.base_speed = 3.0
+        self.base_speed = 5.0
         self.max_speed = 10.0
         self.speed_increment = 0.1
 
